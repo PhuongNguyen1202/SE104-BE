@@ -83,7 +83,6 @@ export const addPost = async (req, res) => {
             if (data.ingredients.length === 0 || data.directions.length === 0)
                 return res.status(200).json({ status: 0, message: 'Invalid information: the title, description, ingredients, thumbnail_image fields blank are not empty' })
             //thêm mới post với các trường hình ảnh null
-            let count_post = (await Post.find()).length;
             let ingredients = data.ingredients;
             let index_ingredients = [];
             ingredients.forEach(ingredient => {
@@ -91,21 +90,19 @@ export const addPost = async (req, res) => {
                 index_ingredients.push(removeVNTones_ingredient);
             });
 
-            const newPost = new Post({
+            let newPost = new Post({
                 title: data.title,
                 ingredients: data.ingredients,
                 id_user: data.id_user,
-                index: count_post,
                 index_title: removeVietnameseTones(data.title),
-                index_ingredients: index_ingredients
+                index_ingredients: index_ingredients,
+                thumbnail_image: ""
             })
-            await newPost.save();
-            //console.log(newPost._id)
             //tiến hành lưu thumbnail_image
             let thumbnail_name = newPost._id + '_thumnail_image';
             let thumbnail_image = await saveImage(DEFAULT_FOLDER_UPLOAD_IMAGE, thumbnail_name, data.thumbnail_image);
-            //console.log('update')
-            await Post.findByIdAndUpdate(newPost._id, { thumbnail_image: thumbnail_image }, { useFindAndModify: true });
+            newPost.thumbnail_image = thumbnail_image;
+            await newPost.save();
 
             //Lưu post_detail
             //console.log(data.directions);
@@ -267,12 +264,9 @@ const getRandomInt = (min, max) => {
 
 export const randomPost = async (req, res) => {
     try {
-        let count_post = (await Post.find()).length;
-        let index = getRandomInt(0, count_post);
-        //console.log(index);
-        const post = await Post.findOne({index: index});
-        //console.log(post)
-        res.status(200).json({ data: post, message: "Success" });
+        const random = await Post.aggregate([{ $sample: {size: 1}}]);
+        console.log(random)
+        res.status(200).json({ data: random, message: "Success" });
     } catch (error) {
         res.status(400).json({message: error.message});
     }

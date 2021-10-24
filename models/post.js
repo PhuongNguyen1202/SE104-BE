@@ -21,7 +21,6 @@ updateAt: {
 thumbnail_image: {
     type: String,
 },
-index: Number,
 index_title: String,
 index_ingredients: [String]
 })
