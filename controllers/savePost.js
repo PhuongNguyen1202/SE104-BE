@@ -1,7 +1,7 @@
 'use strict';
 
 
-import savePost from "../modules/savePost.js";
+import savePost from "../models/savePost.js";
 
 
 

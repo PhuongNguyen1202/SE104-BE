@@ -1,7 +1,7 @@
 'use strict';
 
 
-import likePost from "../modules/reactions.js";
+import likePost from "../models/reactions.js";
 
 
 
