@@ -5,6 +5,10 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
 import { createRequire } from 'module';
+
+import savePostRoutes from './routes/savePost.js';
+import reactionsRoutes from './routes/reactions.js';
+
 const require = createRequire(import.meta.url);
 
 dotenv.config();
@@ -24,6 +28,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static('./public'));
 
+app.use('/save_post', savePostRoutes);
+app.use ('/reaction', reactionsRoutes);
 
 mongoose.connect(CONNECTION_URL, dbOptions)
     .then(() => {
