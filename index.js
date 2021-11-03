@@ -5,6 +5,10 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
 import { createRequire } from 'module';
+
+import savePostRoutes from './routes/savePost.js';
+import reactionsRoutes from './routes/reactions.js';
+
 const require = createRequire(import.meta.url);
 
 import postRouters from './routes/post.js'
