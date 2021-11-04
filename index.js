@@ -12,10 +12,13 @@ import reactionsRoutes from './routes/reactions.js';
 const require = createRequire(import.meta.url);
 
 import postRouters from './routes/post.js'
+import imgrerRouters from './routes/imgredients.js'
 
 dotenv.config();
 const app = express();
 const CONNECTION_URL = process.env.URL_MONGODB_LOCAL;
+
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
 const PORT = process.env.PORT || 5000;
 const dbOptions = {
     useNewUrlParser: true, 
@@ -31,6 +34,7 @@ app.use(cookieParser());
 app.use(express.static('./public'));
 
 app.use('/post', postRouters);
+app.use('/imgredient', imgrerRouters);
 
 
 mongoose.connect(CONNECTION_URL, dbOptions)
