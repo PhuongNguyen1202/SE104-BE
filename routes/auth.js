@@ -1,14 +1,14 @@
 'use strict';
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-var authController = require('../controllers/auth')
+import {registerUser,login,addUser} from '../controllers/auth.js'
 // const upload = require('../midleware/upload')
 
-router.post('/register', authController.registerUser)
+router.post('/register', registerUser)
 
-router.post('/login', authController.login)
+router.post('/login', login)
 
-router.post('/add-user', authController.addUser)
+router.post('/add-user', addUser)
 
 
-module.exports = router
+export default router;

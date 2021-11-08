@@ -1,18 +1,19 @@
 'use strict';
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
+import fs from 'fs'
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import _ from 'lodash';
 
-const mailgun = require("mailgun-js");
+import mailgun from "mailgun-js";
 const DOMAIN = "sandbox48a37214ab4c4cbab4dfad57cb451d9e.mailgun.org";
-const mg = mailgun({apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN});
+const mg = mailgun({apiKey: `${process.env.MAILGUN_APIKEY}`, domain: DOMAIN});
 
-const User = require('../models/User')
+import User from '../models/User.js'
 
 //@route api/user/profile/
 //@desc get user profile
 //@access private
-exports.getUserInfo = async(req, res) => {
+export const getUserInfo = async(req, res) => {
     try{
         let profile = await User.findById(req.userID)
         return res.status(200).json({success: true, data: profile})
@@ -25,7 +26,7 @@ exports.getUserInfo = async(req, res) => {
 //@desc update user profile
 //@access private
 // user bị khùng thì sao ?!?!
-exports.updateUserInfo = async (req, res) => {
+export const updateUserInfo = async (req, res) => {
     try {
         const {firstname, lastname, gender} = req.body
         const user = await User.findByIdAndUpdate(req.userID ,{
@@ -44,7 +45,7 @@ exports.updateUserInfo = async (req, res) => {
 //@route api/user/profile/changepassword
 //@desc update user password
 //@access private
-exports.updatePassword = async (req, res) => {
+export const updatePassword = async (req, res) => {
     try {
         const {oldPassword, newPassword} = req.body
         if(!oldPassword || !newPassword){
@@ -74,7 +75,7 @@ exports.updatePassword = async (req, res) => {
 //@route api/user/forgot-password
 //@desc post email
 //@access public
-exports.forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
         if(!email){
@@ -109,10 +110,9 @@ exports.forgotPassword = async (req, res) => {
 };
 
 //@route api/user/reset-password
-//@desc post password
+//@desc put password
 //@access private
-
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
     try{
         const resetLink = req.params.token 
         const {newPass} = req.body
@@ -131,9 +131,6 @@ exports.resetPassword = async (req, res) => {
                         return res.status(400).json({success: false, message: 'User with this token does not exist.'})
                     }
 
-                    const passwordValid = await bcrypt.compareSync(newPass, user.password)
-
-                    if (passwordValid) return res.status(422).json({success: false, message: "Your new password is the same old password" });
 
                     const salt = await bcrypt.genSalt(10);
                     const hashPassword = await bcrypt.hash(newPass, salt)
@@ -161,3 +158,45 @@ exports.resetPassword = async (req, res) => {
     }
 }
 
+//@route api/user/change-avatar
+//@desc put avatar
+//@access private
+const DEFAULT_FOLDER_UPLOAD_IMAGE = './public/avatar/customs';
+const URL_HOST = 'http://localhost:5000/'
+
+const solvePathURL = path => {
+    let new_path = path.split('/').slice(2).join('/');
+    let full_path = URL_HOST + new_path;
+
+    return full_path;
+}
+
+const saveImage = (folder, nameImage, base64) => {
+    const type = base64.substring(base64.indexOf("/") + 1, base64.indexOf(";base64"));
+    const base64_replace = base64.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+    const path = folder + '/' + nameImage + '.' + type;
+
+    fs.writeFileSync(path, base64_replace, 'base64');
+
+    const full_path = solvePathURL(path);
+    return full_path;
+}
+
+export const changeAvatar = async (req, res) => {
+    try{
+        const {avatar} = req.body
+        if(!avatar){
+            return res.status(400).json({success: false, message: 'Avatar has not been selected'})
+        }
+        let avatar_name = req.userID + '_avatar';
+        let new_avatar = await saveImage(DEFAULT_FOLDER_UPLOAD_IMAGE, avatar_name, avatar);
+        console.log('update image')
+
+        const user = await User.findByIdAndUpdate(req.userID,{ avatar: new_avatar}, { new: true })
+        return res.status(200).json({success: true, data: user})
+
+    }
+    catch(err){
+        return res.status(400).json({success: false, message: err.message})
+    }
+}

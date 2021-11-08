@@ -1,18 +1,15 @@
 'use strict';
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken')
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'
 
-const mailgun = require("mailgun-js");
-const DOMAIN = 'sandbox48a37214ab4c4cbab4dfad57cb451d9e.mailgun.org';
-const mg = mailgun({apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN});
 
-const User = require('../models/User')
+import User from '../models/User.js'
 
 //@route api/auth/register
 //@desc post registerform
 //@access public
 
-exports.registerUser = async(req, res) => {
+export const registerUser = async(req, res) => {
     const {firstname, lastname, email, password, gender} = req.body
     if(!firstname || !lastname || !email || !password){
         return res.status(400).json({success: false, message: 'Missing field'})
@@ -49,7 +46,7 @@ exports.registerUser = async(req, res) => {
 //@route api/auth/login
 //@desc post loginform
 //@access public
-exports.login = async(req, res) => {
+export const login = async(req, res) => {
     const {email, password} = req.body
     if(!email || !password){
         return res.status(400).json({success: false, message: 'Missing field'})
@@ -84,7 +81,7 @@ exports.login = async(req, res) => {
 //@route api/auth/addUser
 //@desc post loginform
 //@access private
-exports.addUser = async(req, res) => {
+export const addUser = async(req, res) => {
     const {firstname, lastname, email, password} = req.body
     if(!firstname || !lastname || !email || !password){
         return res.status(400).json({success: false, message: 'Missing field'})
