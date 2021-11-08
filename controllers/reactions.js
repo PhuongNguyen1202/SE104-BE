@@ -1,12 +1,10 @@
 'use strict';
-
-
 import likePost from "../models/reactions.js";
 
 
 
 ///like một bài post
-export const likeAPost = async (req, res, next) => {
+export const likeAPost = async (req, res) => {
     
         console.log("LIKE A POST");
         const id_user = req.body.id_user;
@@ -45,7 +43,7 @@ export const likeAPost = async (req, res, next) => {
 }
 
 /// unlike một bài viết
-export const unlikePost = async (req, res, next) => {
+export const unlikePost = async (req, res) => {
     try {
         console.log('UNLIKE A POST');
         const id_user = req.body.id_user;

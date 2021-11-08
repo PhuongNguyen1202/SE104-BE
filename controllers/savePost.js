@@ -6,7 +6,7 @@ import savePost from "../models/savePost.js";
 
 
 ///lưu một bài post
-export const saveToPost = async (req, res, next) => {
+export const saveToPost = async (req, res) => {
     
         console.log("SAVE A POST");
         const id_post = req.body.id_post;//để lấy giá trị của body
@@ -44,27 +44,23 @@ export const saveToPost = async (req, res, next) => {
     }
 }
 
-const allSavePost = {
-    data:[],
-}
-export const getAllPostInSavePost = async (req, res, next) => {
+export const getAllPostInSavePost = async (req, res) => {
     try {
         console.log('get ALL POST IN SAVE_POST');
-        const id_user = req.params.id_user;// log
+        const id_user = req.params.id_user;
         const save_post = await savePost.findOne({id_user});
-        allSavePost.data = save_post.list_post;
-        res.status(200).json(allSavePost);
+        res.status(200).json(save_post.list_post);
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
 }
 
 /// xóa một bài viết đã lưu trước đó
-export const deletePostInSavePost = async (req, res, next) => {
+export const deletePostInSavePost = async (req, res) => {
     try {
         console.log('DELETE A POST IN SAVEPOST');
         const id_post = req.body.id_post;
-        const id_user = req.params;/////mai mốt chỉ lấy id_post truyền vào
+        const id_user = req.params;
         const save_post = await savePost.findOneAndUpdate(id_user, {
             $pull: {
                  list_post: id_post  

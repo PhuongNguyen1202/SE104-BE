@@ -8,6 +8,7 @@ import { createRequire } from 'module';
 
 import savePostRoutes from './routes/savePost.js';
 import reactionsRoutes from './routes/reactions.js';
+import roleRoutes from './routes/role.js';
 
 const require = createRequire(import.meta.url);
 
@@ -30,8 +31,9 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static('./public'));
 
-app.use('/post', postRouters);
-
+app.use('/save_post', savePostRoutes);
+app.use ('/reaction', reactionsRoutes);
+app.use('/role', roleRoutes);
 
 mongoose.connect(CONNECTION_URL, dbOptions)
     .then(() => {
