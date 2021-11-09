@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import bodyParser from "body-parser";
+import cors from "cors";
 
 import authRouter from './routes/auth.js'
 import userRouter from './routes/user.js'
@@ -35,6 +36,15 @@ const connectDB = async () => {
 }
 
 connectDB()
+
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
+const dbOptions = {
+        useNewUrlParser: true, 
+        useUnifiedTopology: true,
+        //useCreateIndex: true,
+        //useFindAndModify: false,
+    }
+
 app.use('/post', postRouters);
 app.use('/imgredient', imgrerRouters);
 
