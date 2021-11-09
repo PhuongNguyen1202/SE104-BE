@@ -6,6 +6,15 @@ import bodyParser from "body-parser";
 
 import authRouter from './routes/auth.js'
 import userRouter from './routes/user.js'
+import { createRequire } from 'module';
+
+import savePostRoutes from './routes/savePost.js';
+import reactionsRoutes from './routes/reactions.js';
+import roleRoutes from './routes/role.js';
+
+const require = createRequire(import.meta.url);
+
+import postRouters from './routes/post.js'
 
 dotenv.config();
 const app = express();
@@ -37,3 +46,16 @@ app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter)
 
 app.listen(5000, () => console.log('Listening to server 5000'))
+app.use('/save_post', savePostRoutes);
+app.use ('/reaction', reactionsRoutes);
+app.use('/role', roleRoutes);
+
+mongoose.connect(CONNECTION_URL, dbOptions)
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        })
+    })
+    .catch((error) => {
+        console.log(error.message)
+});

@@ -1,5 +1,10 @@
 import express from 'express';
-import {  deletePostInSavePost, getAllPostInSavePost,  saveToPost } from '../controllers/savePost.js';
+import {  
+    deletePostInSavePost, 
+    getAllPostInSavePost,  
+    saveToPost } 
+    from '../controllers/savePost.js';
+
 
 const router = express.Router();
 
