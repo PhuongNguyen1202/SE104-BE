@@ -19,19 +19,16 @@ import imgrerRouters from './routes/imgredients.js'
 
 dotenv.config();
 const app = express();
-<<<<<<< HEAD
-=======
-const CONNECTION_URL = process.env.URL_MONGODB_LOCAL;
+// const CONNECTION_URL = process.env.URL_MONGODB_LOCAL;
 
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
-const PORT = process.env.PORT || 5000;
-const dbOptions = {
-    useNewUrlParser: true, 
-    useUnifiedTopology: true,
-    //useCreateIndex: true,
-    //useFindAndModify: false,
-}
->>>>>>> origin/search_post
+// app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
+// const PORT = process.env.PORT || 5000;
+// const dbOptions = {
+//     useNewUrlParser: true, 
+//     useUnifiedTopology: true,
+//     //useCreateIndex: true,
+//     //useFindAndModify: false,
+// }
 
 const connectDB = async () => {
     try{
@@ -47,12 +44,9 @@ const connectDB = async () => {
     }
 }
 
-<<<<<<< HEAD
 connectDB()
-=======
 app.use('/post', postRouters);
 app.use('/imgredient', imgrerRouters);
->>>>>>> origin/search_post
 
 app.use(express.urlencoded({ extended: false}))
 app.use(cookieParser());
@@ -69,12 +63,12 @@ app.use('/save_post', savePostRoutes);
 app.use ('/reaction', reactionsRoutes);
 app.use('/role', roleRoutes);
 
-mongoose.connect(CONNECTION_URL, dbOptions)
-    .then(() => {
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        })
-    })
-    .catch((error) => {
-        console.log(error.message)
-});
+// mongoose.connect(CONNECTION_URL, dbOptions)
+//     .then(() => {
+//         app.listen(PORT, () => {
+//             console.log(`Server running on port ${PORT}`);
+//         })
+//     })
+//     .catch((error) => {
+//         console.log(error.message)
+// });
