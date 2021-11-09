@@ -22,7 +22,7 @@ thumbnail_image: {
     type: String,
 },
 index_title: String,
-index_ingredients: [String]
+index_ingredients: String
 })
 const Post = mongoose.model('posts', postSchema);
 

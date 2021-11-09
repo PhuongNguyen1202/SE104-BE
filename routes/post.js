@@ -1,11 +1,20 @@
 import express from "express";
 
-import {addPost, getAllPost, getPostById, getPostByIdUser, updatePost, deletePostById, randomPost} from '../controllers/post.js';
+import {addPost, 
+        getAllPost, 
+        getPostById,
+        getPostByIdUser, 
+        updatePost, 
+        deletePostById, 
+        randomPost,
+        searchPost
+    } from '../controllers/post.js';
 
 const router = express.Router();
 
 router.post('/create', addPost);
 router.get('/random', randomPost);
+router.get('/search', searchPost);
 router.get('/post_management/:id_user', getPostByIdUser);
 router.post('/update/:id', updatePost);
 router.delete('/delete/:id', deletePostById);

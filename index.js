@@ -15,9 +15,23 @@ import roleRoutes from './routes/role.js';
 const require = createRequire(import.meta.url);
 
 import postRouters from './routes/post.js'
+import imgrerRouters from './routes/imgredients.js'
 
 dotenv.config();
 const app = express();
+<<<<<<< HEAD
+=======
+const CONNECTION_URL = process.env.URL_MONGODB_LOCAL;
+
+app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
+const PORT = process.env.PORT || 5000;
+const dbOptions = {
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+    //useCreateIndex: true,
+    //useFindAndModify: false,
+}
+>>>>>>> origin/search_post
 
 const connectDB = async () => {
     try{
@@ -33,7 +47,12 @@ const connectDB = async () => {
     }
 }
 
+<<<<<<< HEAD
 connectDB()
+=======
+app.use('/post', postRouters);
+app.use('/imgredient', imgrerRouters);
+>>>>>>> origin/search_post
 
 app.use(express.urlencoded({ extended: false}))
 app.use(cookieParser());

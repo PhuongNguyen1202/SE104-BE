@@ -2,11 +2,13 @@
 import fs from 'fs';
 import Post from '../models/post.js';
 import PostDetail from '../models/post_detail.js';
+import Imgredient from '../models/imgredients.js';
 
 
 //Các function dùng để lưu ảnh
 const DEFAULT_FOLDER_UPLOAD_IMAGE = './public/post/image';
-const URL_HOST = 'http://localhost:5000/'
+const URL_HOST = 'http://localhost:5000/';
+const LIMIT_OF_POST = 2;
 
 const solvePathURL = path => {
     let new_path = path.split('/').slice(2).join('/');
@@ -69,10 +71,19 @@ const makeDirections = (count_directions, directions) => {
     }
     return arr_directions;
 }
-
+const arrIngredient = (getListIngredient) => {
+    let arr = [];
+    getListIngredient.forEach(e => {
+        arr.push(e.name);
+    });
+    return arr;
+}
 //Thêm bài viết
 export const addPost = async (req, res) => {
     try {
+        let getListIngredient = await Imgredient.find();
+        let arrListIngre = arrIngredient(getListIngredient);
+        //console.log(arrListIngre);
 
         let data = req.body;
         // Kiểm tra tính hợp lệ của dữ liệu
@@ -84,10 +95,20 @@ export const addPost = async (req, res) => {
                 return res.status(200).json({ status: 0, message: 'Invalid information: the title, description, ingredients, thumbnail_image fields blank are not empty' })
             //thêm mới post với các trường hình ảnh null
             let ingredients = data.ingredients;
-            let index_ingredients = [];
+            let newIngredient;
+
+            let index_ingredients = "";
             ingredients.forEach(ingredient => {
                 let removeVNTones_ingredient = removeVietnameseTones(ingredient.name);
-                index_ingredients.push(removeVNTones_ingredient);
+                index_ingredients = removeVNTones_ingredient + " " + index_ingredients;
+                if (!arrListIngre.includes(ingredient.name)){
+                    newIngredient = new Imgredient({
+                        name: ingredient.name,
+                        index_name: removeVNTones_ingredient
+                    })
+                    newIngredient.save();
+                    //console.log('save Ingredient')
+                }
             });
 
             let newPost = new Post({
@@ -271,3 +292,20 @@ export const randomPost = async (req, res) => {
         res.status(400).json({message: error.message});
     }
 }
+
+export const searchPost = async (req, res) => {
+    try {
+        const query = req.query.q;
+        let data = await Post.find(
+            { $text: { $search: query }},
+            {score: { $meta: "textScore"} }
+        ).sort( { score: {$meta: "textScore"} } )
+        .limit(LIMIT_OF_POST)
+        //console.log(data);
+        res.status(200).json({data, message: "success"})
+        
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+}
+
