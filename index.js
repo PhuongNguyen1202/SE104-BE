@@ -17,6 +17,7 @@ const require = createRequire(import.meta.url);
 
 import postRouters from './routes/post.js'
 import imgrerRouters from './routes/imgredients.js'
+import rolePermissionRuters from './routes/role-permission.js'
 
 dotenv.config();
 const app = express();
@@ -62,5 +63,6 @@ app.listen(5000, () => console.log('Listening to server 5000'))
 app.use('/save_post', savePostRoutes);
 app.use ('/reaction', reactionsRoutes);
 app.use('/role', roleRoutes);
+app.use('/role-permission', rolePermissionRuters)
 
 
