@@ -81,6 +81,7 @@ const arrIngredient = (getListIngredient) => {
 //Thêm bài viết
 export const addPost = async (req, res) => {
     try {
+        console.log("TT")
         let getListIngredient = await Imgredient.find();
         let arrListIngre = arrIngredient(getListIngredient);
         //console.log(arrListIngre);
