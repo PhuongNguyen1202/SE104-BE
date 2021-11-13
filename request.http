@@ -54,7 +54,7 @@ Content-Type: application/json
 {
     "firstname": "Vy",
     "lastname": "Ngô",
-    "email": "18520196@gm.uit.edu.vn",
+    "email": "vy5@gmail.com",
     "password": "1234"
 }
 ###
@@ -113,4 +113,10 @@ Content-Type: application/json
     ], 
     "directions": ["thái đồ", "rửa đồ", "nấu"], 
     "id_user" : "617039d06dabbd6bab8a5a42"
-} 
+}
+
+###
+DELETE   http://localhost:5000/api/admin/deleteAllUsers
+
+###
+GET http://localhost:5000/post

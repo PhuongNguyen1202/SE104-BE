@@ -32,8 +32,8 @@ export const deleteUserById = async (req, res) => {
         return res.status(400).json({success:false, message: error.message })
     }
 }
-//@route api/addmin/delete-user
-//@desc delete one user 
+//@route api/addmin/delete-users
+//@desc delete many users 
 //@access private
 export const deleteUsers = async (req, res) => {
     try {
@@ -54,4 +54,18 @@ export const deleteUsers = async (req, res) => {
         return res.status(400).json({success:false, message: error.message })
     }
 }
-//delete all users
+
+//@route api/addmin/deleteAllUsers
+//@desc delete all user 
+//@access private
+export const deleteAllUsers = async(req, res) => {
+    try {
+        const role = "USER"
+        if (!role) return res.status(200).json({succes: false, message: "Role not null"})
+
+        await User.deleteMany({role: role}, {useFindAndModify: true})
+        res.status(200).json({succes: true, message: "Success"})
+    } catch (error) {
+        res.status(400).json({message: error.message})
+    }
+}

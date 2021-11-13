@@ -3,10 +3,12 @@ import fs from 'fs'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
-
+import dotenv from 'dotenv';
+dotenv.config();
 import mailgun from "mailgun-js";
+
 const DOMAIN = "sandbox48a37214ab4c4cbab4dfad57cb451d9e.mailgun.org";
-const mg = mailgun({apiKey: `${process.env.MAILGUN_APIKEY}`, domain: DOMAIN});
+const mg = mailgun({apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN});
 
 import User from '../models/User.js'
 

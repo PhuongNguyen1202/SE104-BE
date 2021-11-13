@@ -99,7 +99,7 @@ export const addUser = async(req, res) => {
         let temp = firstname.slice(0,1);
         const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
 
-        const newUser = new User({email, firstname, lastname, password: hashedPassword, avatar})
+        const newUser = new User({email, firstname, lastname, password: hashedPassword, avatar, role: "USER"})
         await newUser.save()
 
         const accessToken = jwt.sign({userID: newUser._id}, process.env.ACCESS_TOKEN_SECRET)
