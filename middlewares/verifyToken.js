@@ -16,7 +16,7 @@ export const verifyToken = (req, res, next) => {
       return res.status(200).send({ auth: true, message: 'Cannot find user'  });
     next()
   });
-  // console.log(token)
+  //console.log(token)
   // const decoded = jwt_decode(token)
   // console.log(decoded)
 }

@@ -3,12 +3,13 @@ import likePost from "../models/reactions.js";
 
 
 
-///like một bài post
+//like một bài post
+//
 export const likeAPost = async (req, res) => {
     
         console.log("LIKE A POST");
-        const id_user = req.body.id_user;
-        const id_post = req.params.id_post;//To do: _id post được like
+        const id_user = req.userID;
+        const id_post = req.params.id_post;
         ///kiểm tra list_user có tồn tại kg
      try{
         const like_post = await likePost.findOne({ id_post});
@@ -17,14 +18,14 @@ export const likeAPost = async (req, res) => {
             console.log(itemIndex);
             if (itemIndex) {
                 //bài post đã được user like trước đó, thông báo
-               return  res.status(200).json({ message: "Before post was liked! " })
+               return  res.status(200).json({ "success": 0, message: "Before post was liked! " })
               } else {
                 //user chưa like bài post, thêm vào
                 like_post.list_user.push(id_user);
               }
               const data = await like_post.save();
               console.log(data);
-              return res.status(200).json({ message: "Liked success" });
+              return res.status(200).json({ "success": 1, message: "Liked success" });
         }
         else {//  chưa có likePost
             const newlikePost = new likePost({
@@ -35,7 +36,7 @@ export const likeAPost = async (req, res) => {
             });
             const aLikePost = await newlikePost.save()
             console.log(aLikePost);
-            res.status(200).json({ message: "Liked success" });
+            res.status(200).json({ "success": 1, message: "Liked success" });
         }  
     }catch (error) {
         res.status(404).json({ message: error.message })
@@ -46,16 +47,15 @@ export const likeAPost = async (req, res) => {
 export const unlikePost = async (req, res) => {
     try {
         console.log('UNLIKE A POST');
-        const id_user = req.body.id_user;
+        const id_user = req.userID;
         const id_post = req.params;
         const like_post = await likePost.findOneAndUpdate(id_post, {
             $pull: {
                  list_user: id_user 
             }
         }, {new: true});
-        const data = await like_post.save();
+        await like_post.save();
         res.status(200).json({ message: "Unliked success" });
-        console.log (data);
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
