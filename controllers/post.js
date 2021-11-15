@@ -2,7 +2,7 @@
 import fs from 'fs';
 import Post from '../models/post.js';
 import PostDetail from '../models/post_detail.js';
-import Imgredient from '../models/imgredients.js';
+import Imgredient from '../models/ingredients.js';
 
 
 //Các function dùng để lưu ảnh
