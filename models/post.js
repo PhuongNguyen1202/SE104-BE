@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import User from './User.js'
 
 const postSchema = mongoose.Schema({
 title: {
@@ -6,8 +7,9 @@ title: {
 },
 ingredients: [Object]
 ,
-id_user:{
-    type: String,
+id_author:{
+    type: mongoose.Schema.ObjectId,
+    ref: User,
     require: true
 },
 createdAt:{

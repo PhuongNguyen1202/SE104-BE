@@ -2,7 +2,8 @@
 import fs from 'fs';
 import Post from '../models/post.js';
 import PostDetail from '../models/post_detail.js';
-import Imgredient from '../models/ingredients.js';
+import Ingredient from '../models/ingredients.js';
+import likePost from '../models/reactions.js'
 
 
 //Các function dùng để lưu ảnh
@@ -81,13 +82,18 @@ const arrIngredient = (getListIngredient) => {
 //Thêm bài viết
 export const addPost = async (req, res) => {
     try {
-        let getListIngredient = await Imgredient.find();
+        let getListIngredient = await Ingredient.find();
         let arrListIngre = arrIngredient(getListIngredient);
         //console.log(arrListIngre);
 
+        //check login
+        if (!req.userID)
+            return res.status(200).json({ status: 0, message: "You need login" })
+
+        let id_user = req.userID;
         let data = req.body;
         // Kiểm tra tính hợp lệ của dữ liệu
-        if (!data.title || !data.description || !data.ingredients || !data.id_user || !data.thumbnail_image || !data.directions) {
+        if (!data.title || !data.description || !data.ingredients || !data.thumbnail_image || !data.directions) {
             res.status(200).json({ status: 0, message: 'Invalid information: the title, description, ingredients, thumbnail_image fields blank are not NULL' })
         }
         else {
@@ -101,8 +107,8 @@ export const addPost = async (req, res) => {
             ingredients.forEach(ingredient => {
                 let removeVNTones_ingredient = removeVietnameseTones(ingredient.name);
                 index_ingredients = removeVNTones_ingredient + " " + index_ingredients;
-                if (!arrListIngre.includes(ingredient.name)){
-                    newIngredient = new Imgredient({
+                if (!arrListIngre.includes(ingredient.name)) {
+                    newIngredient = new Ingredient({
                         name: ingredient.name,
                         index_name: removeVNTones_ingredient
                     })
@@ -114,7 +120,7 @@ export const addPost = async (req, res) => {
             let newPost = new Post({
                 title: data.title,
                 ingredients: data.ingredients,
-                id_user: data.id_user,
+                id_author: id_user,
                 index_title: removeVietnameseTones(data.title),
                 index_ingredients: index_ingredients,
                 thumbnail_image: ""
@@ -148,7 +154,30 @@ export const addPost = async (req, res) => {
 //Lấy danh sách toàn bộ bài viết
 export const getAllPost = async (req, res) => {
     try {
-        const all_post = await Post.find();
+        let all_post = await Post.find()
+            .populate({
+                path: 'id_author',
+                select: 'firstname lastname avatar'
+            })
+
+        let temp;
+        for (let post of all_post) {
+            temp = await likePost.findOne({ id_post: post._id })
+            if (temp) {
+                post._doc.numberLike = temp.list_user.length;
+                //user like post
+
+                if (req.userID && temp.list_user.indexOf(req.userID) != -1) {
+                    post._doc.isLike = true;
+                }
+                else post._doc.isLike = false
+            }
+            else {
+                post._doc.isLike = false;
+                post._doc.numberLike = 0;
+            }
+        }
+
         res.status(200).json({ data: all_post, message: "Success" });
     } catch (error) {
         res.status(400).json({ message: error.message })
@@ -159,7 +188,7 @@ const populatedPost = [
     "_id",
     "title",
     "ingredients",
-    "id_user",
+    "id_author",
     "createdAt",
     "updateAt",
     "thumbnail_image",
@@ -171,10 +200,15 @@ const populatedPost = [
 export const getPostById = async (req, res) => {
     try {
         let id = req.params.id;
-        const post = await Post.findById(id);
+        const post = await Post.findById(id)
+            .populate({
+                path: 'id_author',
+                select: 'firstname lastname avatar'
+            })
+        const reacts = await likePost.findOne({ id_post: id })
         if (post !== null) {
             const detail_post = await PostDetail.findOne({ id_post: id })
-            console.log(detail_post);
+            //console.log(detail_post);
             let data = {};
             for (let temp of populatedPost) {
                 if (temp in post)
@@ -184,9 +218,21 @@ export const getPostById = async (req, res) => {
                         data[temp] = detail_post[temp];
                 }
             }
+            if (reacts && req.userID && reacts.list_user.indexOf(req.userID) != -1) {
+                data.numberLike = reacts.list_user.length;
+                data.isLike = true;
+            }
+            else if (reacts) {
+                data.numberLike = reacts.list_user.length;
+                data.isLike = false;
+            }
+            else {
+                data.numberLike = 0;
+                data.isLike = false;
+            }
             res.status(200).json({ data, message: "Success" });
         }
-        else res.status(200).join({ message: "Post not exist" })
+        else res.status(200).json({ message: "Post not exist" })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
@@ -195,12 +241,32 @@ export const getPostById = async (req, res) => {
 //Lấy danh sách các bài viết của 1 user
 export const getPostByIdUser = async (req, res) => {
     try {
-        let id_user = req.params.id_user;
+        let id_user = req.userID;
         //console.log(id_user);
-        const posts = await Post.find({ id_user: id_user });
-        if (posts !== null)
-            res.status(200).json({ data: posts, message: "Success" })
-        else res.status(200).json({ message: "user not have post yet" })
+        let posts = await Post.find({ id_author: id_user })
+            .populate({
+                path: 'id_author',
+                select: 'firstname lastname avatar'
+            });
+
+        let temp;
+        for (let post of posts) {
+            temp = await likePost.findOne({ id_post: post._id })
+            if (temp) {
+                post._doc.numberLike = temp.list_user.length;
+                //user like post
+
+                if (req.userID && temp.list_user.indexOf(req.userID) != -1) {
+                    post._doc.isLike = true;
+                }
+                else post._doc.isLike = false
+            }
+            else {
+                post._doc.isLike = false;
+                post._doc.numberLike = 0;
+            }
+        }
+        res.status(200).json({ data: posts, message: "Success" })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
@@ -285,11 +351,16 @@ const getRandomInt = (min, max) => {
 
 export const randomPost = async (req, res) => {
     try {
-        const random = await Post.aggregate([{ $sample: {size: 1}}]);
-        console.log(random)
-        res.status(200).json({ data: random, message: "Success" });
+        const random = await Post.aggregate([{ $sample: { size: 1 } }])
+        const data = await Post.findById(random[0]._id)
+            .populate({
+                path: 'id_author',
+                select: 'firstname lastname avatar'
+            });
+        //console.log(random)
+        res.status(200).json({ data: data, message: "Success" });
     } catch (error) {
-        res.status(400).json({message: error.message});
+        res.status(400).json({ message: error.message });
     }
 }
 
@@ -297,15 +368,15 @@ export const searchPost = async (req, res) => {
     try {
         const query = req.query.q;
         let data = await Post.find(
-            { $text: { $search: query }},
-            {score: { $meta: "textScore"} }
-        ).sort( { score: {$meta: "textScore"} } )
-        .limit(LIMIT_OF_POST)
+            { $text: { $search: query } },
+            { score: { $meta: "textScore" } }
+        ).sort({ score: { $meta: "textScore" } })
+            .limit(LIMIT_OF_POST)
         //console.log(data);
-        res.status(200).json({data, message: "success"})
-        
+        res.status(200).json({ data, message: "success" })
+
     } catch (error) {
-        res.status(400).json({message: error.message});
+        res.status(400).json({ message: error.message });
     }
 }
 

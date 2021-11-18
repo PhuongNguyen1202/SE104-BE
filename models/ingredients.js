@@ -4,5 +4,5 @@ const ingredientsSchema = mongoose.Schema({
     index_name: String
 })
 
-const Ingredient = mongoose.model('imgredients', ingredientsSchema);
+const Ingredient = mongoose.model('ingredients', ingredientsSchema);
 export default Ingredient;
