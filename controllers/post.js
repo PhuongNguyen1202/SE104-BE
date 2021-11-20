@@ -154,11 +154,16 @@ export const addPost = async (req, res) => {
 //Lấy danh sách toàn bộ bài viết
 export const getAllPost = async (req, res) => {
     try {
-        let all_post = await Post.find()
+        const current_page = req.query.page;
+        const per_page = parseInt(req.query.limit);
+        const all_post = await Post.find();
+        let list_post = await Post.find()
             .populate({
                 path: 'id_author',
                 select: 'firstname lastname avatar'
             })
+            .limit(per_page)
+            .skip(per_page*(current_page-1))
 
         let temp;
         for (let post of all_post) {
@@ -178,7 +183,25 @@ export const getAllPost = async (req, res) => {
             }
         }
 
-        res.status(200).json({ data: all_post, message: "Success" });
+        const total = all_post.length;
+        let from = 0;
+        let to = 0;
+        if((current_page - 1) * per_page + 1 <= total)
+        {
+            from = (current_page - 1) * per_page + 1;
+            to = from + list_post.length - 1;
+        }
+        else {
+            from = to = 0 
+        }
+        let paging = {
+            "current_page": current_page,
+            "limit": per_page,
+            "from": from,
+            "to": to,
+            "total": total
+        }
+        res.status(200).json({ data: list_post, paging: paging, message: "Success" });
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
