@@ -166,7 +166,7 @@ export const getAllPost = async (req, res) => {
             .skip(per_page*(current_page-1))
 
         let temp;
-        for (let post of all_post) {
+        for (let post of list_post) {
             temp = await likePost.findOne({ id_post: post._id })
             if (temp) {
                 post._doc.numberLike = temp.list_user.length;
@@ -389,13 +389,15 @@ export const randomPost = async (req, res) => {
 
 export const searchPost = async (req, res) => {
     try {
+        console.log("Search")
         const query = req.query.q;
+        console.log(query)
         let data = await Post.find(
             { $text: { $search: query } },
             { score: { $meta: "textScore" } }
         ).sort({ score: { $meta: "textScore" } })
             .limit(LIMIT_OF_POST)
-        //console.log(data);
+        console.log(data);
         res.status(200).json({ data, message: "success" })
 
     } catch (error) {
