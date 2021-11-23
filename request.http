@@ -5,7 +5,7 @@ Content-Type: application/json
     "firstname": "Vy",
     "lastname": "Ngô",
     "password": "1234",
-    "email": "ngo2@gmail.com",
+    "email": "18520196@gm.uit.edu.vn",
     "gender": "nữ"
 }
 ####
@@ -13,38 +13,38 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "password": "4321",
-    "email": "vyngo2@gmail.com"
+    "password": "1234",
+    "email": "18520196@gm.uit.edu.vn"
 }
 ####
 GET http://localhost:5000/api/user/profile
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTcwMzlkMDZkYWJiZDZiYWI4YTVhNDIiLCJpYXQiOjE2MzU5MDU0MDV9.9mzxFVwo_yl1-N4yD0UhVVwfTeR-0-0yjXrsdK2gOLs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTk5MGEzMGZiNzdhNDM2NWIwY2JlYzIiLCJpYXQiOjE2Mzc2NjMwMDF9.VogFhT_tkbfuz5KPnaxROEsi-0Igh7SK-JPOVavaIqs
 ####
 PUT http://localhost:5000/api/user/update
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTcwMzlkMDZkYWJiZDZiYWI4YTVhNDIiLCJpYXQiOjE2MzU5MDU0MDV9.9mzxFVwo_yl1-N4yD0UhVVwfTeR-0-0yjXrsdK2gOLs
+Authorization:  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTk5MGEzMGZiNzdhNDM2NWIwY2JlYzIiLCJpYXQiOjE2Mzc0MTk2MDR9.Ei_dVW7dslXiJmOVZ6ihBNlmdJEmqWJKsmY9grO-O-E
 Content-Type: application/json
 
 {
-    "firstname": "Vy",
-    "gender": "nữ"
+    "firstname": "Vi",
+    "gender": "nam"
 }
-####
+####Hiển thông báo
 PUT http://localhost:5000/api/user/changepassword
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTcwMzlkMDZkYWJiZDZiYWI4YTVhNDIiLCJpYXQiOjE2MzU5MDU0MDV9.9mzxFVwo_yl1-N4yD0UhVVwfTeR-0-0yjXrsdK2gOLs
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTk5MGEzMGZiNzdhNDM2NWIwY2JlYzIiLCJpYXQiOjE2Mzc0MTk2MDR9.Ei_dVW7dslXiJmOVZ6ihBNlmdJEmqWJKsmY9grO-O-E
 Content-Type: application/json
 
 {
-    "oldPassword": "1234",
-    "newPassword": "4321"
+    "oldPassword": "4321",
+    "newPassword": "1234"
 }
 ###
 POST  http://localhost:5000/api/auth/add-user
 Content-Type: application/json
 
 {
-    "firstname": "Ơ",
-    "lastname": "Nguyễn",
-    "email": "o@gmail.com",
+    "firstname": "Phương",
+    "lastname": "Nguyễn Thị",
+    "email": "p@gmail.com",
     "password": "1234"
 }
 ###
@@ -73,7 +73,7 @@ Content-Type: application/json
 }
 ###
 PUT http://localhost:5000/api/user/change-avatar
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTcwMzlkMDZkYWJiZDZiYWI4YTVhNDIiLCJpYXQiOjE2MzYwMzIwMTF9.cPj7ZigqVIU-jrEERj7Z_l3VWGDgR9OZ0cUFHffP644
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTk5MGEzMGZiNzdhNDM2NWIwY2JlYzIiLCJpYXQiOjE2Mzc0MTk2MDR9.Ei_dVW7dslXiJmOVZ6ihBNlmdJEmqWJKsmY9grO-O-E
 Content-Type: application/json
 
 {
@@ -83,14 +83,14 @@ Content-Type: application/json
 ###
 GET http://localhost:5000/api/admin/get-users
 ###
-DELETE http://localhost:5000/api/admin/delete-user/618cd2aa686b720239ba05ca
+DELETE http://localhost:5000/api/admin/delete-user/618cc4b95c43620b29c61c03
 ###
 DELETE   http://localhost:5000/api/admin/delete-users
 Content-Type: application/json
 
 {
-    "id_users":["618cd2aa686b720239ba05ca",
-    "617039d06dabbd6bab8a5a42"
+    "id_users":["618cc4d05c43620b29c61c06",
+    "618cd10a795f37fd1d402026"
     ] 
 }
 ###

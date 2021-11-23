@@ -3,9 +3,12 @@ import User from '../models/User.js'
 
 export const verifyToken = (req, res, next) => {
 
-  const token = req.headers['authorization']
-  if (!token) 
+  const bearerHearder = req.headers['authorization'];
+  if (!bearerHearder) 
     return res.status(403).send({ auth: false, message: 'No token provided.' });
+
+  const bearer = bearerHearder.split(' ');
+  const token = bearer[1];
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, data) => {      
     if (err) 
@@ -20,4 +23,5 @@ export const verifyToken = (req, res, next) => {
   // const decoded = jwt_decode(token)
   // console.log(decoded)
 }
+
 
