@@ -3,7 +3,9 @@ import fs from 'fs';
 import Post from '../models/post.js';
 import PostDetail from '../models/post_detail.js';
 import Ingredient from '../models/ingredients.js';
-import likePost from '../models/reactions.js'
+import likePost from '../models/reactions.js';
+import savePost from "../models/savePost.js";
+import e from 'express';
 
 
 //Các function dùng để lưu ảnh
@@ -144,7 +146,7 @@ export const addPost = async (req, res) => {
             })
             await newPostDetail.save()
 
-            res.status(200).json({ message: "Success" })
+            res.status(200).json({ message: "Add Success" })
         }
     } catch (error) {
         res.status(400).json({ message: error.message })
@@ -163,8 +165,16 @@ export const getAllPost = async (req, res) => {
                 select: 'firstname lastname avatar'
             })
             .limit(per_page)
-            .skip(per_page*(current_page-1))
+            .skip(per_page * (current_page - 1))
 
+        let save_post
+        if (req.userID) {
+            console.log(req.userID)
+            save_post = await savePost.findOne({ id_user: req.userID });
+            console.log()
+        }
+
+        //like post
         let temp;
         for (let post of list_post) {
             temp = await likePost.findOne({ id_post: post._id })
@@ -181,18 +191,21 @@ export const getAllPost = async (req, res) => {
                 post._doc.isLike = false;
                 post._doc.numberLike = 0;
             }
+
+            if (save_post && save_post.list_post.indexOf(post._id) != -1)
+                post._doc.isSaved = true;
+            else post._doc.isSaved = false;
         }
 
         const total = all_post.length;
         let from = 0;
         let to = 0;
-        if((current_page - 1) * per_page + 1 <= total)
-        {
+        if ((current_page - 1) * per_page + 1 <= total) {
             from = (current_page - 1) * per_page + 1;
             to = from + list_post.length - 1;
         }
         else {
-            from = to = 0 
+            from = to = 0
         }
         let paging = {
             "current_page": current_page,
@@ -253,6 +266,12 @@ export const getPostById = async (req, res) => {
                 data.numberLike = 0;
                 data.isLike = false;
             }
+            //check saved
+            if (req.userID) {
+                let save_post = await savePost.findOne({ id_user: req.userID })
+                if (save_post && save_post.list_post.indexOf(id) != -1) data.isSaved = true
+            }
+            else data.isSaved = false
             res.status(200).json({ data, message: "Success" });
         }
         else res.status(200).json({ message: "Post not exist" })
@@ -271,6 +290,12 @@ export const getPostByIdUser = async (req, res) => {
                 path: 'id_author',
                 select: 'firstname lastname avatar'
             });
+        //get list saved post
+        let save_post
+        if (req.userID) {
+            //console.log(req.userID)
+            save_post = await savePost.findOne({ id_user: req.userID });
+        }
 
         let temp;
         for (let post of posts) {
@@ -288,6 +313,10 @@ export const getPostByIdUser = async (req, res) => {
                 post._doc.isLike = false;
                 post._doc.numberLike = 0;
             }
+            //check save_post
+            if (save_post && save_post.list_post.indexOf(post._id) != -1)
+                post._doc.isSaved = true;
+            else post._doc.isSaved = false;
         }
         res.status(200).json({ data: posts, message: "Success" })
     } catch (error) {
@@ -345,7 +374,7 @@ export const updatePost = async (req, res) => {
         //update
         await Post.findByIdAndUpdate(id_post, updatePost, { useFindAndModify: true });
         await PostDetail.findOneAndUpdate({ id_post }, updateDetailPost, { useFindAndModify: true });
-        res.status(200).json({ message: "Success" })
+        res.status(200).json({ message: "Update Success" })
 
     } catch (error) {
         res.status(400).json({ message: error.message })
@@ -361,15 +390,83 @@ export const deletePostById = async (req, res) => {
             return res.status(200).json({ message: "Post is not exist" })
         await Post.findByIdAndDelete(id_post, { useFindAndModify: true })
         await PostDetail.findOneAndDelete({ id_post }, { useFindAndModify: true });
-        res.status(200).json({ message: "Success" })
+        const nameImage = post.thumbnail_image.split('/')
+        console.log(nameImage[5]);
+        fs.unlink(DEFAULT_FOLDER_UPLOAD_IMAGE + '/' + nameImage[5], function (err) {
+            if (err) console.error(err);
+            console.log('File has been Deleted');
+        })
+        res.status(200).json({ message: "Delete Success" })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
 }
 
-//ramdom
-const getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min)) + min;
+export const deleteManyPost = async (req, res) => {
+    try {
+        const list_post_delete = req.body.list_post;
+        let nameImage;
+        if (list_post_delete.length === 0)
+            return res.status(200).json({ status: 0, message: "You must choose the post to delete" })
+        //get list thumnail image
+        const list_post = await Post.find({
+            _id: {
+                $in: list_post_delete
+            }
+        })
+        //console.log(list_post)
+        await Post.deleteMany({
+            _id: {
+                $in: list_post_delete
+            }
+        }, { useFindAndModify: true })
+        await PostDetail.deleteMany({
+            id_post: {
+                $in: list_post_delete
+            }
+        }, { useFindAndModify: true })
+        list_post.forEach(post => {
+            nameImage = post.thumbnail_image.split('/')
+            fs.unlink(DEFAULT_FOLDER_UPLOAD_IMAGE + '/' + nameImage[5], function (err) {
+                if (err) console.error(err);
+                console.log('File has been Deleted');
+            })
+        });
+        res.status(200).json({ status: 1, message: "Delete Success" })
+    } catch (error) {
+        res.status(400).json({ message: message.error })
+    }
+}
+
+export const deleteAllPostByIdUser = async (req, res) => {
+    try {
+        const user_id = req.userID;
+        const list_post = await Post.find({ id_author: user_id });
+        //console.log(list_post)
+        if (list_post.length === 0)
+            return res.status(200).json({ status: 0, message: "User dosen't have any post" });
+        let thumbnail_name = [];
+        let list_id_post = [];
+        list_post.forEach(post => {
+            let temp = post.thumbnail_image.split('/');
+            thumbnail_name.push(temp[5]);
+            list_id_post.push(post._id);
+        });
+        //delete post
+        await Post.deleteMany({ id_author: user_id }, { useFindAndModify: true })
+        //delete detail
+        await PostDetail.deleteMany({ id_post: { $in: list_id_post } }, { useFindAndModify: true })
+        //delete image
+        thumbnail_name.forEach(e => {
+            fs.unlink(DEFAULT_FOLDER_UPLOAD_IMAGE + '/' + e, function (err) {
+                if (err) console.error(err);
+                console.log('File has been Deleted');
+            })
+        });
+        res.status(200).json({ status: 1, message: "Delete Success" })
+    } catch (error) {
+        res.status(400).json({ message: message.error })
+    }
 }
 
 export const randomPost = async (req, res) => {
@@ -389,16 +486,76 @@ export const randomPost = async (req, res) => {
 
 export const searchPost = async (req, res) => {
     try {
+        const limit = req.query.limit;
+        const current_page = req.query.page;
         console.log("Search")
         const query = req.query.q;
-        console.log(query)
+        //console.log(query)
+        const all_post = await Post.find(
+            { $text: { $search: query } },
+            { score: { $meta: "textScore" } })
+            .sort({ score: { $meta: "textScore" } })
+
         let data = await Post.find(
             { $text: { $search: query } },
-            { score: { $meta: "textScore" } }
-        ).sort({ score: { $meta: "textScore" } })
-            .limit(LIMIT_OF_POST)
+            { score: { $meta: "textScore" } })
+            .sort({ score: { $meta: "textScore" } })
+            .populate({
+                path: 'id_author',
+                select: 'firstname lastname avatar'
+            })
+            .limit(limit)
+            .skip(limit * (current_page - 1))
+
+        let save_post
+        if (req.userID) {
+            console.log(req.userID)
+            save_post = await savePost.findOne({ id_user: req.userID });
+            console.log()
+        }
+
+        //like post
+        let temp;
+        for (let post of data) {
+            temp = await likePost.findOne({ id_post: post._id })
+            if (temp) {
+                post._doc.numberLike = temp.list_user.length;
+                //user like post
+
+                if (req.userID && temp.list_user.indexOf(req.userID) != -1) {
+                    post._doc.isLike = true;
+                }
+                else post._doc.isLike = false
+            }
+            else {
+                post._doc.isLike = false;
+                post._doc.numberLike = 0;
+            }
+
+            if (save_post && save_post.list_post.indexOf(post._id) != -1)
+                post._doc.isSaved = true;
+            else post._doc.isSaved = false;
+        }
+
+        const total = all_post.length;
+        let from = 0;
+        let to = 0;
+        if ((current_page - 1) * limit + 1 <= total) {
+            from = (current_page - 1) * limit + 1;
+            to = from + data.length - 1;
+        }
+        else {
+            from = to = 0
+        }
+        let paging = {
+            "current_page": current_page,
+            "limit": per_page,
+            "from": from,
+            "to": to,
+            "total": total
+        }
         console.log(data);
-        res.status(200).json({ data, message: "success" })
+        res.status(200).json({ data: data, paging: paging, message: "success" })
 
     } catch (error) {
         res.status(400).json({ message: error.message });

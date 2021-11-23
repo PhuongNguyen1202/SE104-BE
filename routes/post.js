@@ -9,7 +9,9 @@ import {addPost,
         updatePost, 
         deletePostById, 
         randomPost,
-        searchPost
+        searchPost,
+        deleteManyPost,
+        deleteAllPostByIdUser
     } from '../controllers/post.js';
 
 const router = express.Router();
@@ -19,6 +21,8 @@ router.get('/random', randomPost);
 router.get('/search', searchPost);
 router.get('/post_management', verifyToken, getPostByIdUser);
 router.post('/update/:id', verifyToken, updatePost);
+router.delete('/delete-many', verifyToken, deleteManyPost)
+router.delete('/delete-all', verifyToken, deleteAllPostByIdUser)
 router.delete('/delete/:id', verifyToken, deletePostById);
 router.get('/:id', getIdLogin, getPostById);
 router.get('/', getIdLogin, getAllPost);
