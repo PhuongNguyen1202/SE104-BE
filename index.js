@@ -10,13 +10,11 @@ import authRouter from './routes/auth.js'
 import userRouter from './routes/user.js'
 import adminRouter from './routes/admin.js'
 import postRouters from './routes/post.js'
-import imgrerRouters from './routes/imgredients.js'
+import ingrerRouters from './routes/ingredients.js'
 import savePostRoutes from './routes/savePost.js';
 import reactionsRoutes from './routes/reactions.js';
 import roleRoutes from './routes/role.js';
-
-
-
+import rolePermissionRuters from './routes/role-permission.js'
 
 dotenv.config();
 const app = express();
@@ -55,16 +53,15 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json())
 
 app.use('/post', postRouters);
-app.use('/imgredient', imgrerRouters);
+app.use('/ingredient', ingrerRouters);
+app.use('/role-permission', rolePermissionRuters)
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter)
 app.use('/api/admin', adminRouter)
-
-
-
 app.use('/save_post', savePostRoutes);
 app.use ('/reaction', reactionsRoutes);
 app.use('/role', roleRoutes);
+
 app.listen(5000, () => console.log('Listening to server 5000'))
 
 

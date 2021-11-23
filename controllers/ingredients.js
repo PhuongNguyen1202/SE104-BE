@@ -1,6 +1,6 @@
 'use strict';
 
-import Imgredient from '../models/imgredients.js';
+import Ingredient from '../models/ingredients.js';
 
 //bỏ dấu tiếng việt
 const removeVietnameseTones = (str) => {
@@ -32,11 +32,11 @@ const removeVietnameseTones = (str) => {
     return str;
 }
 
-export const liveSearchImgredient = async(req, res) => {
+export const liveSearchIngredient = async(req, res) => {
     try {
         let payload = req.query.q.trim();
         payload = removeVietnameseTones(payload);
-        let data = await Imgredient.find({index_name: {$regex: new RegExp('^'+payload+'.*', 'i')}}).exec();
+        let data = await Ingredient.find({index_name: {$regex: new RegExp('^'+payload+'.*', 'i')}}).exec();
         data = data.slice(0, 10);
         res.status(200).json({ data, message: "Success" })
     } catch (error) {
