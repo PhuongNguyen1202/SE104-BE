@@ -35,9 +35,9 @@ const UserShema = new Schema({
     },
 
     role: {
-        // type: Schema.Types.ObjectId,
-        // ref: 'roles'
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'Roles'
+        // type: String
     },
 
     resetLink: {

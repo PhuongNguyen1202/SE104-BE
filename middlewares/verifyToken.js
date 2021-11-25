@@ -1,3 +1,4 @@
+'use strict';
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
 
@@ -17,7 +18,7 @@ export const verifyToken = (req, res, next) => {
     let profile = await User.findById(req.userID)
     if(!profile)
       return res.status(200).send({ auth: true, message: 'Cannot find user'  });
-    next()
+    return next()
   });
   //console.log(token)
   // const decoded = jwt_decode(token)

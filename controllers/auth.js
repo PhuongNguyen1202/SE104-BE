@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 
 import User from '../models/User.js'
-
+import Role from '../models/Role.js'
 //@route api/auth/register
 //@desc post registerform
 //@access public
@@ -27,10 +27,36 @@ export const registerUser = async(req, res) => {
         let temp = firstname.slice(0,1);
         const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
 
-        const newUser = new User({email, firstname, lastname, password: hashedPassword, gender, avatar})
-        await newUser.save()
+        const user = new User({email, firstname, lastname, password: hashedPassword, gender, avatar})
 
-        const accessToken = jwt.sign({userID: newUser._id}, process.env.ACCESS_TOKEN_SECRET)
+        const newUser = await user.save((err) => {
+            if (err) return res.status(500).json({success: false, message: err.message });
+    
+            if (req.body.role) {
+                Role.find(
+                    { name: { $in: req.body.role } },
+                    (err, role) => {
+                        if (err) return res.status(500).json({success:false, message: err.message });
+    
+                        user.role = role.map(role => role._id);
+                        user.save((err) => {
+                            if (err) return res.status(500).json({success:false, message: err.message });
+                        });
+                    }
+                );
+            } else {
+                Role.findOne({ role_name: "user" }, (err, role) => {
+                    if (err) res.status(500).json({success:false, message: err.message });
+    
+                    user.role = role._id;
+                    user.save((err) => {
+                        if (err) return res.status(500).json({success:false, message: err.message });
+                    });
+                });
+            };
+        });
+
+        const accessToken = jwt.sign({userID: user._id}, process.env.ACCESS_TOKEN_SECRET)
         res.json({
             success: true,
             message: 'User created successfully',
@@ -82,8 +108,8 @@ export const login = async(req, res) => {
 //@desc post loginform
 //@access private
 export const addUser = async(req, res) => {
-    const {firstname, lastname, email, password} = req.body
-    if(!firstname || !lastname || !email || !password){
+    const {firstname, lastname, email, password, role} = req.body
+    if(!firstname || !lastname || !email || !password || !role){
         return res.status(400).json({success: false, message: 'Missing field'})
     }
 
@@ -99,7 +125,7 @@ export const addUser = async(req, res) => {
         let temp = firstname.slice(0,1);
         const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
 
-        const newUser = new User({email, firstname, lastname, password: hashedPassword, avatar, role: "USER"})
+        const newUser = new User({email, firstname, lastname, password: hashedPassword, avatar, role})
         await newUser.save()
 
         const accessToken = jwt.sign({userID: newUser._id}, process.env.ACCESS_TOKEN_SECRET)

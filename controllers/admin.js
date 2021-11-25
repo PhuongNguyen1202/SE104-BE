@@ -60,7 +60,7 @@ export const deleteUsers = async (req, res) => {
 //@access private
 export const deleteAllUsers = async(req, res) => {
     try {
-        const role = "USER"
+        const role = "user"
         if (!role) return res.status(200).json({succes: false, message: "Role not null"})
 
         await User.deleteMany({role: role}, {useFindAndModify: true})

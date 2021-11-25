@@ -3,18 +3,18 @@ import express from 'express'
 const router = express.Router()
 import {getUserInfo, updateUserInfo, updatePassword, forgotPassword, resetPassword, changeAvatar} from '../controllers/user.js'
 import {verifyToken} from'../middlewares/verifyToken.js'
+import {isUser} from '../middlewares/isUser.js'
 
+router.get('/profile',[verifyToken, isUser], getUserInfo)
 
-router.get('/profile',verifyToken, getUserInfo)
+router.put('/update', [verifyToken, isUser], updateUserInfo)
 
-router.put('/update', verifyToken, updateUserInfo)
+router.put('/changepassword', [verifyToken, isUser], updatePassword)
 
-router.put('/changepassword', verifyToken, updatePassword)
+router.put('/forgot-password',isUser, forgotPassword)
 
-router.put('/forgot-password', forgotPassword)
+router.put('/reset-password/:token',isUser, resetPassword)
 
-router.put('/reset-password/:token', resetPassword)
-
-router.put('/change-avatar', verifyToken, changeAvatar)
+router.put('/change-avatar', [verifyToken, isUser], changeAvatar)
 
 export default router;
