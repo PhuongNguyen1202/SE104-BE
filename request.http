@@ -5,7 +5,7 @@ Content-Type: application/json
     "firstname": "Vy",
     "lastname": "Ngô",
     "password": "1234",
-    "email": "18520196@gm.uit.edu.vn",
+    "email": "bap2@gmail.com",
     "gender": "nữ"
 }
 ####
@@ -14,14 +14,14 @@ Content-Type: application/json
 
 {
     "password": "1234",
-    "email": "18520196@gm.uit.edu.vn"
+    "email": "bap2@gmail.com"
 }
 ####
 GET http://localhost:5000/api/user/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTk5MGEzMGZiNzdhNDM2NWIwY2JlYzIiLCJpYXQiOjE2Mzc2NjMwMDF9.VogFhT_tkbfuz5KPnaxROEsi-0Igh7SK-JPOVavaIqs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTlmYzQxMDlhZGVkZGMzOGEyODBmY2QiLCJpYXQiOjE2Mzc4NjE0ODd9.HnbeDKx1_d_Csklg7_k2AHUUb_oRX3T_oQXxIxWxFH4
 ####
 PUT http://localhost:5000/api/user/update
-Authorization:  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTk5MGEzMGZiNzdhNDM2NWIwY2JlYzIiLCJpYXQiOjE2Mzc0MTk2MDR9.Ei_dVW7dslXiJmOVZ6ihBNlmdJEmqWJKsmY9grO-O-E
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTlmYzQxMDlhZGVkZGMzOGEyODBmY2QiLCJpYXQiOjE2Mzc4NjE0ODd9.HnbeDKx1_d_Csklg7_k2AHUUb_oRX3T_oQXxIxWxFH4
 Content-Type: application/json
 
 {
