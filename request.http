@@ -2,10 +2,61 @@ POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
+    "lastname": "Ngô",
+    "password": "1234",
+    "email": "bapluocchuachin@gmail.com",
+    "gender": "nữ"
+}
+###
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "firstname": "Vy",
+    "password": "1234",
+    "email": "bapluocchuachin@gmail.com",
+    "gender": "nam"
+}
+###
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
     "firstname": "Vy",
     "lastname": "Ngô",
     "password": "1234",
-    "email": "bap2@gmail.com",
+    "gender": "nữ"
+}
+###
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "firstname": "Vy",
+    "lastname": "Ngô",
+    "email": "bap1@gmail.com",
+    "password": "1234",
+    "gender": "nam"
+}
+###
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "firstname": "Vy",
+    "lastname": "Ngô",
+    "email": "bap1@gmail.com",
+    "gender": "nữ"
+}
+###
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "firstname": "Vy",
+    "lastname": "Ngô",
+    "email": "bapluocchuachin@gmail.com",
+    "password": "1234",  
     "gender": "nữ"
 }
 ####
@@ -14,7 +65,37 @@ Content-Type: application/json
 
 {
     "password": "1234",
-    "email": "bap2@gmail.com"
+    "email": "bapluocchuachin@gmail.com"
+}
+####
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "password": "1234"
+}
+####
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "b@gmail.com",
+    "password": "1234"
+}
+####
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "bapluocchuachin@gmail.com"
+}
+####
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "bapluocchuachin@gmail.com",
+    "password": "1"
 }
 ####
 GET http://localhost:5000/api/user/profile
@@ -30,12 +111,37 @@ Content-Type: application/json
 }
 ####Hiển thông báo
 PUT http://localhost:5000/api/user/changepassword
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MTk5MGEzMGZiNzdhNDM2NWIwY2JlYzIiLCJpYXQiOjE2Mzc0MTk2MDR9.Ei_dVW7dslXiJmOVZ6ihBNlmdJEmqWJKsmY9grO-O-E
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2Mzc5MzU0NjZ9.lfXQ0HID-MUM8iClfyyxuDeTT5E_L8aePwrOKxj_EpE
 Content-Type: application/json
 
 {
-    "oldPassword": "4321",
+    "oldPassword": "1",
     "newPassword": "1234"
+}
+####Hiển thông báo
+PUT http://localhost:5000/api/user/changepassword
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2Mzc5Mzk1Mjd9.mG_vHh6srxUpndXjt2F9FBl0VAOV_TI4byuity8TEVo
+Content-Type: application/json
+
+{
+    "newPassword": "1234"
+}
+####Hiển thông báo
+PUT http://localhost:5000/api/user/changepassword
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2Mzc5Mzk1Mjd9.mG_vHh6srxUpndXjt2F9FBl0VAOV_TI4byuity8TEVo
+Content-Type: application/json
+
+{
+    "oldPassword": "1234"
+}
+###
+PUT http://localhost:5000/api/user/changepassword
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2Mzc5Mzk1Mjd9.mG_vHh6srxUpndXjt2F9FBl0VAOV_TI4byuity8TEVo
+Content-Type: application/json
+
+{
+    "oldPassword": "1234",
+    "newPassword": "4321"
 }
 ###
 POST  http://localhost:5000/api/auth/add-user

@@ -28,33 +28,15 @@ export const registerUser = async(req, res) => {
         const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
 
         const user = new User({email, firstname, lastname, password: hashedPassword, gender, avatar})
-
-        const newUser = await user.save((err) => {
-            if (err) return res.status(500).json({success: false, message: err.message });
-    
-            if (req.body.role) {
-                Role.find(
-                    { name: { $in: req.body.role } },
-                    (err, role) => {
-                        if (err) return res.status(500).json({success:false, message: err.message });
-    
-                        user.role = role.map(role => role._id);
-                        user.save((err) => {
-                            if (err) return res.status(500).json({success:false, message: err.message });
-                        });
-                    }
-                );
-            } else {
-                Role.findOne({ role_name: "user" }, (err, role) => {
-                    if (err) res.status(500).json({success:false, message: err.message });
-    
-                    user.role = role._id;
-                    user.save((err) => {
-                        if (err) return res.status(500).json({success:false, message: err.message });
-                    });
-                });
-            };
-        });
+        const role = await Role.findOne({role_name: "user"})
+        if(!role){
+            return res.status(500).json({success: false, message: "Role is null"})
+        }
+        
+        user.role = role._id
+        user.save((err) => {
+            if (err) return res.status(500).json({success:false, message: err.message });
+            });
 
         const accessToken = jwt.sign({userID: user._id}, process.env.ACCESS_TOKEN_SECRET)
         res.json({
