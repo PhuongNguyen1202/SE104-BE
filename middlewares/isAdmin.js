@@ -9,7 +9,7 @@ export const isAdmin = async(req, res, next) => {
         const userInfo = await User.findById(user);
 
         //user isn't admin
-        if(userInfo.role != 'ADMIN')
+        if(!userInfo || userInfo.role != 'ADMIN')
             return res.status(200).json({status: 0, message: "You haven't permission"})
 
         next()
