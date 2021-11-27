@@ -4,6 +4,7 @@ const router = express.Router()
 import {registerUser,login,addUser} from '../controllers/auth.js'
 // const upload = require('../midleware/upload')
 
+
 router.post('/register', registerUser)
 
 router.post('/login', login)
