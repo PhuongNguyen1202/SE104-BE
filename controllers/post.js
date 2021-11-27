@@ -486,9 +486,9 @@ export const randomPost = async (req, res) => {
 
 export const searchPost = async (req, res) => {
     try {
-        const limit = req.query.limit;
+        const limit = parseInt(req.query.limit);
         const current_page = req.query.page;
-        console.log("Search")
+        //console.log("Search")
         const query = req.query.q;
         //console.log(query)
         const all_post = await Post.find(
@@ -549,12 +549,12 @@ export const searchPost = async (req, res) => {
         }
         let paging = {
             "current_page": current_page,
-            "limit": per_page,
+            "limit": limit,
             "from": from,
             "to": to,
             "total": total
         }
-        console.log(data);
+        //console.log(data);
         res.status(200).json({ data: data, paging: paging, message: "success" })
 
     } catch (error) {
