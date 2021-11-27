@@ -31,6 +31,9 @@ export const getUserInfo = async(req, res) => {
 export const updateUserInfo = async (req, res) => {
     try {
         const {firstname, lastname, gender} = req.body
+        if(!firstname || !lastname || !gender){
+            return res.status(400).json({success: false, message: "Missing field"})
+        }
         const user = await User.findByIdAndUpdate(req.userID ,{
             firstname,
             lastname,
@@ -53,9 +56,9 @@ export const updatePassword = async (req, res) => {
         if(!oldPassword || !newPassword){
             return res.status(400).json({success: false, message: "Missing field"})
         }
-        if(oldPassword === newPassword){
-            return res.status(422).json({success:false, message: "Newpassword must be not same oldpassword" })
-        }
+        // if(oldPassword === newPassword){
+        //     return res.status(422).json({success:false, message: "Newpassword must be not same oldpassword" })
+        // }
         const user = await User.findById(req.userID)
         if (user) {
             const passwordValid = await bcrypt.compareSync(oldPassword, user.password)
