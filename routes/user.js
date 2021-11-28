@@ -11,9 +11,9 @@ router.put('/update', [verifyToken, isUser], updateUserInfo)
 
 router.put('/changepassword', [verifyToken, isUser], updatePassword)
 
-router.put('/forgot-password',isUser, forgotPassword)
+router.put('/forgot-password', forgotPassword)
 
-router.put('/reset-password/:token',isUser, resetPassword)
+router.put('/reset-password/:token', resetPassword)
 
 router.put('/change-avatar', [verifyToken, isUser], changeAvatar)
 

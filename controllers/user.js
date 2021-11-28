@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import mailgun from "mailgun-js";
 
-const DOMAIN = "sandbox48a37214ab4c4cbab4dfad57cb451d9e.mailgun.org";
+const DOMAIN = "sandboxf323020c2b1642a691a15da4ac044d8b.mailgun.org";
 const mg = mailgun({apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN});
 
 import User from '../models/User.js'
@@ -94,7 +94,7 @@ export const forgotPassword = async (req, res) => {
             process.env.RESET_PASSWORD_KEY, {expiresIn: '20m'})
 
         const data = {
-            from: 'noreply@hello.com',
+            from: 'nomnom@hello.com',
             to: email,
             subject: 'Reset Password Link',
             html: `
@@ -107,7 +107,7 @@ export const forgotPassword = async (req, res) => {
             if (error) {
                 res.status(422).json({success: false, message: error.message })
             }
-            else res.status(200).json({success: true, result: userupdate})
+            else res.status(200).json({success: true, message: "Email have been sent"})
         });
     } catch (error) {
         res.status(404).json({success:false, message: error.message })
