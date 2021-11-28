@@ -11,7 +11,8 @@ import e from 'express';
 //Các function dùng để lưu ảnh
 const DEFAULT_FOLDER_UPLOAD_IMAGE = './public/post/image';
 const URL_HOST = 'http://localhost:5000/';
-const LIMIT_OF_POST = 2;
+const LIMIT_OF_POST_DEFAULT = 20;
+const CURRENT_PAGE_DEFAULT = 1;
 
 const solvePathURL = path => {
     let new_path = path.split('/').slice(2).join('/');
@@ -156,8 +157,8 @@ export const addPost = async (req, res) => {
 //Lấy danh sách toàn bộ bài viết
 export const getAllPost = async (req, res) => {
     try {
-        const current_page = req.query.page;
-        const per_page = parseInt(req.query.limit);
+        const current_page = req.query.page || CURRENT_PAGE_DEFAULT;
+        const per_page = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
         const all_post = await Post.find();
         let list_post = await Post.find()
             .populate({
@@ -486,8 +487,8 @@ export const randomPost = async (req, res) => {
 
 export const searchPost = async (req, res) => {
     try {
-        const limit = parseInt(req.query.limit);
-        const current_page = req.query.page;
+        const limit = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
+        const current_page = req.query.page || CURRENT_PAGE_DEFAULT;
         //console.log("Search")
         const query = req.query.q;
         //console.log(query)
