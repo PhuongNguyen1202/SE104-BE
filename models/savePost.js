@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 const savePostSchema = new mongoose.Schema (
     {
         id_user: {
-            type: String,
+            type: String
         },
         list_post: [
                  String

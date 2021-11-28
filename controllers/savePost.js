@@ -4,7 +4,7 @@
 import savePost from "../models/savePost.js";
 import Post from "../models/post.js";
 import User from "../models/User.js";
-import PostDetail from "../models/post_detail.js";
+
 
 
 
@@ -53,7 +53,7 @@ export const saveToPost = async (req, res) => {
 //http://localhost:5000/save_post
 export const getAllPostInSavePost = async (req, res) => {
     try {
-        console.log('get ALL POST IN SAVE_POST');
+        console.log('GET ALL POST IN SAVE_POST');
         const id_user = req.userID;
         const save_post = await savePost.findOne({id_user});
         if (!save_post) {//không có save_post
@@ -73,19 +73,15 @@ export const getAllPostInSavePost = async (req, res) => {
                         "id_post":"",
                         "title": "",
                         "author": "",
-                        "thumbnail_image": "",
-                        "description": ""
+                        "thumbnail_image": ""
                     }
-                    const post_id_user = post.id_user;// lấy id_user của bài post lưu đó
+                    const post_id_user = post.id_author;// lấy id_user của bài post lưu đó
                     const user = await User.findById(post_id_user)
                     const author = user.lastname.concat(" ",user.firstname) //lấy tên tác giả
                     InfoPost.author = author;
                     InfoPost.id_post = temp;
                     InfoPost.title = post.title; //lấy tiêu đề
                     InfoPost.thumbnail_image = post.thumbnail_image;//lấy ảnh của bài post
-                    const detailPost = await PostDetail.findOne({id_post: temp})//tìm detail để lấy description
-                    InfoPost.description = detailPost.description;
-                    //console.log(InfoPost);
                     data.push(InfoPost);
                 }
                 //console.log(data);
@@ -105,14 +101,12 @@ export const deletePostInSavePost = async (req, res) => {
         console.log('DELETE A POST IN SAVEPOST');
         const id_post = req.body.id_post;
         const id_user = req.userID;
-        const save_post = await savePost.findOneAndUpdate({id_user}, {
+        await savePost.findOneAndUpdate({id_user}, {
             $pull: {
                  list_post: id_post  
             }
         }, {new: true});
-        await save_post.save();
         res.status(200).json({ message: "Success" });
-        //console.log (save_post);
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
@@ -125,14 +119,12 @@ export const deleteManyPostInSavePost = async (req, res) => {
         console.log('DELETE MANY POST IN SAVEPOST');
         const list_post = req.body.list_post;
         const id_user = req.userID;
-        const save_post = await savePost.findOneAndUpdate({id_user}, {
+        await savePost.findOneAndUpdate({id_user}, {
             $pullAll: {
                  list_post: list_post  
             }
         }, {new: true});
-        await save_post.save();
         res.status(200).json({ message: "Success" });
-        //console.log (save_post);
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
@@ -142,12 +134,9 @@ export const deleteManyPostInSavePost = async (req, res) => {
 //http://localhost:5000/save_post/all_unsaved
 export const deleteAll_ListPostInSavePost = async(req, res) => {
     try {
-        console.log('DELETE ALL POST IN SAVEPOST');
+        console.log('DELETE SAVEPOST');
         const id_user = req.userID;
-        const save_post = await savePost.findOneAndUpdate({id_user}, {
-            $set: { list_post: [] }
-            }, {new: true});
-            await save_post.save();
+        await savePost.findOneAndDelete({id_user: id_user},{ useFindAndModify: true });
             res.status(200).json({ message: "Success"})   
     } catch (error) {
         res.status(400).json({message: error.message})
