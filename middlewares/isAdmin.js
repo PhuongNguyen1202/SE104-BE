@@ -7,8 +7,9 @@ export const isAdmin = async(req, res, next) => {
 
         //get info user
         const userInfo = await User.findById(user).populate('role');
-        //console.log("userinfo: ",userInfo)
+        // console.log("userinfo: ",userInfo)
 
+        // console.log("userinfo: ",userInfo.role.role_name)
         //user isn't admin
         if(!userInfo || userInfo.role.role_name != 'admin')
             return res.status(200).json({status: 0, message: "You haven't permission"})
