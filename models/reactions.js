@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 const likePostSchema = new mongoose.Schema (
     {
         id_post: {
-            type: String,
+            type: String
         },
         list_user: [
                  String

@@ -49,12 +49,11 @@ export const unlikePost = async (req, res) => {
         console.log('UNLIKE A POST');
         const id_user = req.userID;
         const id_post = req.params;
-        const like_post = await likePost.findOneAndUpdate(id_post, {
+        await likePost.findOneAndUpdate(id_post, {
             $pull: {
                  list_user: id_user 
             }
         }, {new: true});
-        await like_post.save();
         res.status(200).json({ message: "Unliked success" });
     } catch (error) {
         res.status(404).json({ message: error.message })
