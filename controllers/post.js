@@ -221,6 +221,8 @@ export const getAllPost = async (req, res) => {
             "to": to,
             "total": total
         }
+        if (natural === -1) paging.filter = "new"
+        else paging.query = "default"
         res.status(200).json({ data: list_post, paging: paging, message: "Success" });
     } catch (error) {
         res.status(400).json({ message: error.message })
