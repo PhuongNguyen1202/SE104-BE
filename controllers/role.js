@@ -7,7 +7,7 @@ export const addRole = async (req, res) => {
 
     try {
         console.log("ADD A ROLE");
-        let data = req.body;
+        const data = req.body;
         if (!data.role_name || !data.description) {
             res.status(200).json({ message: 'Invalid information: role_name, description fields blank are not NULL' })
         }

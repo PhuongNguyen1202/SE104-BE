@@ -6,12 +6,12 @@ import likePost from "../models/reactions.js";
 //like một bài post
 //
 export const likeAPost = async (req, res) => {
-    
+        
+     try{
         console.log("LIKE A POST");
         const id_user = req.userID;
         const id_post = req.params.id_post;
         ///kiểm tra list_user có tồn tại kg
-     try{
         const like_post = await likePost.findOne({ id_post});
         if (like_post){ // đã có likePost
             let itemIndex = like_post.list_user.includes(id_user);
