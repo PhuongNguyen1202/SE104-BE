@@ -161,7 +161,7 @@ export const getAllPost = async (req, res) => {
         const per_page = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
         let natural;
         const query = req.query.q;
-        if(query == 'news')
+        if(query == 'new')
             natural = -1;
         else natural = 1;
         //console.log(natural)
