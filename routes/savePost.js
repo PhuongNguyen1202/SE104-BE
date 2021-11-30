@@ -11,10 +11,10 @@ import {isUser} from '../middlewares/isUser.js';
 
 const router = express.Router();
 
-router.post('/saved', verifyToken, saveToPost);
-router.get('/', verifyToken, getAllPostInSavePost);
-router.post('/unsaved', verifyToken, deletePostInSavePost);
-router.post('/many_unsaved', verifyToken, deleteManyPostInSavePost);
-router.delete('/all_unsaved', verifyToken, deleteAll_ListPostInSavePost);
+router.post('/saved', [verifyToken, isUser], saveToPost);
+router.get('/', [verifyToken, isUser], getAllPostInSavePost);
+router.post('/unsaved', [verifyToken, isUser], deletePostInSavePost);
+router.post('/many_unsaved', [verifyToken, isUser], deleteManyPostInSavePost);
+router.delete('/all_unsaved', [verifyToken, isUser], deleteAll_ListPostInSavePost);
 
 export default router;
