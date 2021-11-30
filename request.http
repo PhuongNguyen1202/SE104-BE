@@ -53,9 +53,9 @@ POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
-    "firstname": "Vy",
-    "lastname": "Ngô",
-    "email": "bapluocchuachin@gmail.com",
+    "firstname": "Gâu",
+    "lastname": "Gâu",
+    "email": "gaugau@gmail.com",
     "password": "1234",  
     "gender": "nữ"
 }
@@ -79,8 +79,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "b@gmail.com",
-    "password": "1234"
+    "email": "bapluocchuachin@gmail.com",
+    "password": "4321"
 }
 ####
 POST http://localhost:5000/api/auth/login
@@ -307,8 +307,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWExM
 }
 ###
 GET http://localhost:5000/api/admin/get-users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEzNDhjZGZkMTdkNzU3Njg0ZjVhMGYiLCJpYXQiOjE2MzgyNDAzNjB9.vYFMrEDMT4bf5mDijaRF1tvUSC5jLQdOsA7GJZC0WcI
 ###
-DELETE http://localhost:5000/api/admin/delete-user/618cc4b95c43620b29c61c03
+DELETE http://localhost:5000/api/admin/delete-user/618cd8f0d061338c97eddb66
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEzNDhjZGZkMTdkNzU3Njg0ZjVhMGYiLCJpYXQiOjE2MzgxMDgzOTV9.KtQPcHVpMbn268X4dikr2WmRxfHF03bpAO8q9duzMPE
 ###
 DELETE   http://localhost:5000/api/admin/delete-users
 Content-Type: application/json
@@ -345,3 +347,17 @@ DELETE   http://localhost:5000/api/admin/deleteAllUsers
 
 ###
 GET http://localhost:5000/post
+###
+POST http://localhost:5000/save_post/saved
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE1ZjU3Y2Y5NTJhNWY1NGRjYWM3ZDQiLCJpYXQiOjE2MzgyNjYyMzZ9.2iM1fb0qUfmA2WMH_PGntq5K7aWJ83jZKPqA2YTLVbU
+Content-Type: application/json
+
+{
+    "id_post" : "61a2ec2cbb32fde5dcb13b52"
+}
+###
+GET http://localhost:5000/save_post
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2MzgyMDExMTJ9.H5_tP3M_30-3Vm8l3Y72jH5HFJCSjUk3jUNcfJYEMKE
+###
+POST http://localhost:5000/reaction/liked/61a2edcfbb32fde5dcb13b62
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE1ZjU3Y2Y5NTJhNWY1NGRjYWM3ZDQiLCJpYXQiOjE2MzgyNjYyMzZ9.2iM1fb0qUfmA2WMH_PGntq5K7aWJ83jZKPqA2YTLVbU
