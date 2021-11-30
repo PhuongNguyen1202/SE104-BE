@@ -159,8 +159,15 @@ export const getAllPost = async (req, res) => {
     try {
         const current_page = req.query.page || CURRENT_PAGE_DEFAULT;
         const per_page = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
+        let natural;
+        const query = req.query.q;
+        if(query == 'news')
+            natural = -1;
+        else natural = 1;
+        //console.log(natural)
         const all_post = await Post.find();
         let list_post = await Post.find()
+            .sort({$natural: natural})
             .populate({
                 path: 'id_author',
                 select: 'firstname lastname avatar'
@@ -170,9 +177,8 @@ export const getAllPost = async (req, res) => {
 
         let save_post
         if (req.userID) {
-            console.log(req.userID)
+            //console.log(req.userID)
             save_post = await savePost.findOne({ id_user: req.userID });
-            console.log()
         }
 
         //like post
