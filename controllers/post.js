@@ -5,7 +5,7 @@ import PostDetail from '../models/post_detail.js';
 import Ingredient from '../models/ingredients.js';
 import likePost from '../models/reactions.js';
 import savePost from "../models/savePost.js";
-import e from 'express';
+
 
 
 //Các function dùng để lưu ảnh
@@ -161,13 +161,13 @@ export const getAllPost = async (req, res) => {
         const per_page = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
         let natural;
         const query = req.query.q;
-        if(query == 'new')
+        if (query == 'new')
             natural = -1;
         else natural = 1;
         //console.log(natural)
         const all_post = await Post.find();
         let list_post = await Post.find()
-            .sort({$natural: natural})
+            .sort({ $natural: natural })
             .populate({
                 path: 'id_author',
                 select: 'firstname lastname avatar'
@@ -390,17 +390,28 @@ export const updatePost = async (req, res) => {
     }
 }
 
+
 //xóa bài viết
 export const deletePostById = async (req, res) => {
     try {
         let id_post = req.params.id;
         const post = await Post.findById(id_post);
+
+        //console.log(save_post)
         if (!post)
             return res.status(200).json({ message: "Post is not exist" })
         await Post.findByIdAndDelete(id_post, { useFindAndModify: true })
         await PostDetail.findOneAndDelete({ id_post }, { useFindAndModify: true });
         const nameImage = post.thumbnail_image.split('/')
-        console.log(nameImage[5]);
+        //console.log(nameImage[5]);
+        //Delete like of post
+        await likePost.findOneAndRemove({ id_post }, { useFindAndModify: true })
+
+        //delete save post
+        const save_post = await savePost.updateMany({ list_post: id_post }, {
+            $pull: { list_post: id_post }
+        }, { useFindAndModify: true });
+
         fs.unlink(DEFAULT_FOLDER_UPLOAD_IMAGE + '/' + nameImage[5], function (err) {
             if (err) console.error(err);
             console.log('File has been Deleted');
@@ -414,7 +425,19 @@ export const deletePostById = async (req, res) => {
 export const deleteManyPost = async (req, res) => {
     try {
         const list_post_delete = req.body.list_post;
+        const save_post = await savePost.updateMany({
+            id_post:
+                { $in: list_post_delete }
+        }, {
+            $pull: {
+                list_post:
+                    { $in: list_post_delete }
+            }
+        }, {useFindAndModify: true});
+        //console.log(save_post)
+
         let nameImage;
+
         if (list_post_delete.length === 0)
             return res.status(200).json({ status: 0, message: "You must choose the post to delete" })
         //get list thumnail image
@@ -423,17 +446,27 @@ export const deleteManyPost = async (req, res) => {
                 $in: list_post_delete
             }
         })
-        //console.log(list_post)
+
+        //Delete Post
         await Post.deleteMany({
             _id: {
                 $in: list_post_delete
             }
         }, { useFindAndModify: true })
+        //Delete Detail
         await PostDetail.deleteMany({
             id_post: {
                 $in: list_post_delete
             }
         }, { useFindAndModify: true })
+        //Delete like
+        await likePost.deleteMany({
+            id_post: {
+                $in: list_post_delete
+            }
+        }, { useFindAndModify: true })
+
+        //Delete image
         list_post.forEach(post => {
             nameImage = post.thumbnail_image.split('/')
             fs.unlink(DEFAULT_FOLDER_UPLOAD_IMAGE + '/' + nameImage[5], function (err) {
@@ -465,6 +498,23 @@ export const deleteAllPostByIdUser = async (req, res) => {
         await Post.deleteMany({ id_author: user_id }, { useFindAndModify: true })
         //delete detail
         await PostDetail.deleteMany({ id_post: { $in: list_id_post } }, { useFindAndModify: true })
+        //delete id in save post
+        const save_post = await savePost.updateMany({
+            id_post:
+                { $in: list_id_post }
+        }, {
+            $pull: {
+                list_post:
+                    { $in: list_id_post }
+            }
+        }, {useFindAndModify: true});
+        console.log(save_post)
+        //delete like
+        await likePost.deleteMany({
+            id_post: {
+                $in: list_id_post
+            }
+        }, { useFindAndModify: true })
         //delete image
         thumbnail_name.forEach(e => {
             fs.unlink(DEFAULT_FOLDER_UPLOAD_IMAGE + '/' + e, function (err) {
