@@ -15,6 +15,9 @@ export const saveToPost = async (req, res) => {
         console.log("SAVE A POST");
         const id_post = req.body.id_post;
         const id_user = req.userID;
+        if (!id_post) {
+            return res.status(200).json({ message: "Not NULL" });
+        }
         //Kiểm tra id_post có tồn tại không
         let check_id_post = await Post.findById(id_post);
         if (check_id_post) {
@@ -24,7 +27,7 @@ export const saveToPost = async (req, res) => {
                 let itemIndex = save_post.list_post.includes(id_post);
                 if (itemIndex) {
                     //bài post đã lưu, thông báo
-                    return res.status(200).json({ success: 0, message: "Before post was saved! " })
+                    return res.status(200).json({ success: 0, message: "Before post was saved!" })
                 } else {
                     //chưa  lưu, thêm vào
                     save_post.list_post.push(id_post);
