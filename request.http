@@ -65,7 +65,7 @@ Content-Type: application/json
 
 {
     "password": "1234",
-    "email": "nguyenphuong@gmail.com"
+    "email": "vy@gmail.com"
 }
 ####
 POST http://localhost:5000/api/auth/login
@@ -79,8 +79,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "bapluocchuachin@gmail.com",
-    "password": "4321"
+    "email": "gaugau@gmail.com",
+    "password": "1234"
 }
 ####
 POST http://localhost:5000/api/auth/login
@@ -94,8 +94,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "bapluocchuachin@gmail.com",
-    "password": "4321"
+    "email": "b@gmail.com",
+    "password": "1234"
 }
 ####
 GET http://localhost:5000/api/user/profile
@@ -176,10 +176,11 @@ POST  http://localhost:5000/api/auth/add-user
 Content-Type: application/json
 
 {
-    "firstname": "Phương",
-    "lastname": "Nguyễn Thị",
-    "email": "nguyenphuong@gmail.com",
+    "firstname": "Ngô",
+    "lastname": "Bắp",
+    "email": "b@gmail.com",
     "password": "1234",
+    "gender": "Nữ",
     "role": "admin"
 }
 ###
@@ -307,17 +308,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWExM
 }
 ###
 GET http://localhost:5000/api/admin/get-users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEzNDhjZGZkMTdkNzU3Njg0ZjVhMGYiLCJpYXQiOjE2MzgyNDAzNjB9.vYFMrEDMT4bf5mDijaRF1tvUSC5jLQdOsA7GJZC0WcI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgyOTE2NTl9.ggTtS-UVWhxJLPHFirq5A9QuvnoW_NMn3C0kD2dV7ws
 ###
-DELETE http://localhost:5000/api/admin/delete-user/618cd8f0d061338c97eddb66
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEzNDhjZGZkMTdkNzU3Njg0ZjVhMGYiLCJpYXQiOjE2MzgxMDgzOTV9.KtQPcHVpMbn268X4dikr2WmRxfHF03bpAO8q9duzMPE
+DELETE http://localhost:5000/api/admin/delete-user/61a5f57cf952a5f54dcac7d4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgzNDc4NDV9.dgO4E9688-l4fQ1g8H_EVArlvCI8N0AbG5UrdW2y8g4
 ###
 DELETE   http://localhost:5000/api/admin/delete-users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgzNTA3Njl9.qcCQ3ae_pnzMmPcLJrP3sLKRw82DM5Eaz00rhojWX1s
 Content-Type: application/json
 
 {
-    "id_users":["618cc4d05c43620b29c61c06",
-    "618cd10a795f37fd1d402026"
+    "id_users":["618f8989fb3b4b70b01eb0e7",
+    "618f899bfb3b4b70b01eb0ea"
     ] 
 }
 ###
@@ -344,20 +346,22 @@ Content-Type: application/json
 
 ###
 DELETE   http://localhost:5000/api/admin/deleteAllUsers
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgzNTA3Njl9.qcCQ3ae_pnzMmPcLJrP3sLKRw82DM5Eaz00rhojWX1s
 ###
 GET http://localhost:5000/post
 ###
 POST http://localhost:5000/save_post/saved
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE1ZjU3Y2Y5NTJhNWY1NGRjYWM3ZDQiLCJpYXQiOjE2MzgyNjYyMzZ9.2iM1fb0qUfmA2WMH_PGntq5K7aWJ83jZKPqA2YTLVbU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEzNTY4ZmY2ZmI0MGFkNDQwOGEwYmQiLCJpYXQiOjE2MzgzMjk1NjB9.t82M_zHkGh-AQzJ9eYDnGSdqEEaaSzg-xpGuSFUOYp4
 Content-Type: application/json
 
 {
-    "id_post" : "61a2ec2cbb32fde5dcb13b52"
+    "id_post" : "61a6ea6882afe6202ecbe7e3"
 }
 ###
 GET http://localhost:5000/save_post
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2MzgyMDExMTJ9.H5_tP3M_30-3Vm8l3Y72jH5HFJCSjUk3jUNcfJYEMKE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MThmODk5YmZiM2I0YjcwYjAxZWIwZWEiLCJpYXQiOjE2MzgzMjYyODh9.g1_UoiGxRqQ-qCprXMEOZ9w7YbZ-QUtcT7gmAhbhoPA
 ###
-POST http://localhost:5000/reaction/liked/61a2edcfbb32fde5dcb13b62
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE1ZjU3Y2Y5NTJhNWY1NGRjYWM3ZDQiLCJpYXQiOjE2MzgyNjYyMzZ9.2iM1fb0qUfmA2WMH_PGntq5K7aWJ83jZKPqA2YTLVbU
+POST http://localhost:5000/reaction/liked/61a30120decf91b23876f751
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MThmODk4OWZiM2I0YjcwYjAxZWIwZTciLCJpYXQiOjE2MzgzNTA2NjJ9.aqxyJD-GgZhapDRM9PjJIRzs6kEXPL_Do4dEcyD-CZg
+###
+POST http://localhost:5000/api/login-facebook

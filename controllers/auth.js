@@ -140,37 +140,28 @@ export const addUser = async(req, res) => {
 //@access public
 export const loginFacebook = async (req, res) => {
     const {userID, accessToken} = req.body
-    let urlGraphFacebook = `https://graph.facebook.com/v12.0/${userID}/?fields=id,name,email&access_token=${accessToken}`
+    let urlGraphFacebook = `https://graph.facebook.com/v12.0/${userID}/?fields=id,name,email,gender&access_token=${accessToken}`
     fetch(urlGraphFacebook, {
         method: 'GET'
     })
     .then(response => response.json())
     .then(response => {
-        const {email, firstname, lastname, gender,password} = response
+        const {email,name, gender} = response
+        console.log(response)
         User.findOne({email}).exec(async (err, user) => {
             if(err) {
                 return res.status(400).json({success: false, message: err.message})
             } else{
                 if(user){
-                    const passwordValid = await bcrypt.compareSync(password, user.password)
-
-                    if(!passwordValid){
-                        return res.status(400).json({success: false, message: 'Incorrect'})
-                    }
-
+                    
                     const accessToken = jwt.sign({userID: user._id.toString()}, process.env.ACCESS_TOKEN_SECRET)
                     res.json({
                         success: true,
                         message: 'Loggin successfully',
                         accessToken
                     })
-                } else{
-                    const salt = await bcrypt.genSalt(10);
-                    const hashedPassword = await bcrypt.hash(password, salt);
-                    let temp = firstname.slice(0,1);
-                    const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
-
-                    const user = new User({email, firstname, lastname, password: hashedPassword, gender, avatar})
+                } else{ 
+                    const user = new User({email, firstname : name, gender})
                     const role = await Role.findOne({role_name: "user"})
                     if(!role){
                         return res.status(500).json({success: false, message: "Role is null"})
@@ -196,11 +187,11 @@ export const loginFacebook = async (req, res) => {
 //@route api/auth/login-google
 //@desc post
 //@access public
-export const googleLogin = async (req, res) => {
+export const loginGoogle = async (req, res) => {
     const {tokenId} = req.body
 
     client.verifyIdToken({idToken: tokenId, audience: "811148561616-u5o162igd4bdqkb26lan40e7t356hh7f.apps.googleusercontent.com"}).then(async response => {
-        const {email_verified, firstname, lastname , email, gender, password} = response.payload
+        const {email_verified, name, email} = response.payload
         if(email_verified) {
             User.findOne({email}).exec(async (err, user) => {
                 if(err){
@@ -210,12 +201,6 @@ export const googleLogin = async (req, res) => {
                 })
             } else {
                 if(user){
-                    const passwordValid = await bcrypt.compareSync(password, user.password)
-
-                    if(!passwordValid){
-                        return res.status(400).json({success: false, message: 'Incorrect'})
-                    }
-
                     const accessToken = jwt.sign({userID: user._id.toString()}, process.env.ACCESS_TOKEN_SECRET)
                     res.json({
                         success: true,
@@ -223,12 +208,10 @@ export const googleLogin = async (req, res) => {
                         accessToken
                     }) 
                 } else {
-                    const salt = await bcrypt.genSalt(10);
-                    const hashedPassword = await bcrypt.hash(password, salt);
                     let temp = firstname.slice(0,1);
                     const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
 
-                    const user = new User({email, firstname, lastname, password: hashedPassword, gender, avatar})
+                    const user = new User({email, firstname: name, avatar})
                     const role = await Role.findOne({role_name: "user"})
                     if(!role){
                         return res.status(500).json({success: false, message: "Role is null"})

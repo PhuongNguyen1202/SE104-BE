@@ -18,12 +18,12 @@ const UserShema = new Schema({
     lastname: {
         type: String,
         trim: true,
-        required: true
+        // required: true
     },
 
     password: {
         type: String,
-        required: true
+        // required: true
     },
 
     gender: {
