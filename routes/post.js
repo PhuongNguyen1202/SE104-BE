@@ -1,19 +1,20 @@
 import express from "express";
-import {verifyToken} from'../middlewares/verifyToken.js'
+import { verifyToken } from '../middlewares/verifyToken.js'
 import { getIdLogin } from '../middlewares/getIdWhenLogin.js'
 import { isAdmin } from "../middlewares/isAdmin.js";
 
-import {addPost, 
-        getAllPost, 
-        getPostById,
-        getPostByIdUser, 
-        updatePost, 
-        deletePostById, 
-        randomPost,
-        searchPost,
-        deleteManyPost,
-        deleteAllPostByIdUser
-    } from '../controllers/post.js';
+import {
+    addPost,
+    getAllPost,
+    getPostById,
+    getPostByIdUser,
+    updatePost,
+    deletePostById,
+    randomPost,
+    searchPost,
+    deleteManyPost,
+    deleteAllPostByIdUser
+} from '../controllers/post.js';
 
 const router = express.Router();
 

@@ -433,8 +433,8 @@ export const deleteManyPost = async (req, res) => {
                 list_post:
                     { $in: list_post_delete }
             }
-        }, {useFindAndModify: true});
-        //console.log(save_post)
+        }, { useFindAndModify: true });
+        console.log(save_post)
 
         let nameImage;
 
@@ -507,7 +507,7 @@ export const deleteAllPostByIdUser = async (req, res) => {
                 list_post:
                     { $in: list_id_post }
             }
-        }, {useFindAndModify: true});
+        }, { useFindAndModify: true });
         console.log(save_post)
         //delete like
         await likePost.deleteMany({
