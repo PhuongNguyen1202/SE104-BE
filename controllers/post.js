@@ -87,6 +87,7 @@ export const addPost = async (req, res) => {
     try {
         let getListIngredient = await Ingredient.find();
         let arrListIngre = arrIngredient(getListIngredient);
+        let check
         //console.log(arrListIngre);
 
         //check login
@@ -96,12 +97,22 @@ export const addPost = async (req, res) => {
         let id_user = req.userID;
         let data = req.body;
         // Kiểm tra tính hợp lệ của dữ liệu
+        //kiểm tra dữ liệu rỗng
         if (!data.title || !data.description || !data.ingredients || !data.thumbnail_image || !data.directions) {
             res.status(200).json({ status: 0, message: 'Invalid information: the title, description, ingredients, thumbnail_image fields blank are not NULL' })
         }
         else {
             if (data.ingredients.length === 0 || data.directions.length === 0)
                 return res.status(200).json({ status: 0, message: 'Invalid information: the title, description, ingredients, thumbnail_image fields blank are not empty' })
+
+            //Kiểm tra hình phải là base64
+            //console.log("Add...................")
+            const base64_replace = data.thumbnail_image.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+            const isBase64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+            let check = isBase64.test(base64_replace);
+            //console.log(check);
+            if (!check) return res.status(200).json({ status: 0, message: "Invalid Image" })
+
             //thêm mới post với các trường hình ảnh null
             let ingredients = data.ingredients;
             let newIngredient;
@@ -116,7 +127,7 @@ export const addPost = async (req, res) => {
                         index_name: removeVNTones_ingredient
                     })
                     newIngredient.save();
-                    //console.log('save Ingredient')
+                    console.log('save Ingredient')
                 }
             });
 
@@ -147,7 +158,7 @@ export const addPost = async (req, res) => {
             })
             await newPostDetail.save()
 
-            res.status(200).json({ message: "Add Success" })
+            res.status(200).json({ status: 1, message: "Add Success" })
         }
     } catch (error) {
         res.status(400).json({ message: error.message })
@@ -157,8 +168,16 @@ export const addPost = async (req, res) => {
 //Lấy danh sách toàn bộ bài viết
 export const getAllPost = async (req, res) => {
     try {
-        const current_page = req.query.page || CURRENT_PAGE_DEFAULT;
+        //check limit and page
+        const current_page = parseInt(req.query.page) || CURRENT_PAGE_DEFAULT;
         const per_page = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
+
+        if ((req.query.page && !Number.isFinite(parseInt(req.query.page))) || (req.query.limit && !Number.isFinite(parseInt(req.query.limit))))
+            return res.status(200).json({ status: 0, message: "limit and page must be a Number" })
+
+        if ((req.query.page && parseInt(req.query.page) < 0) || (req.query.limit && parseInt(req.query.limit) < 0))
+            return res.status(200).json({ status: 0, message: "limit and page must greater than 0" })
+
         let natural;
         const query = req.query.q;
         if (query == 'new')
@@ -223,7 +242,7 @@ export const getAllPost = async (req, res) => {
         }
         if (natural === -1) paging.filter = "new"
         else paging.query = "default"
-        res.status(200).json({ data: list_post, paging: paging, message: "Success" });
+        res.status(200).json({ status:1, data: list_post, paging: paging, message: "Success" });
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
@@ -245,6 +264,8 @@ const populatedPost = [
 export const getPostById = async (req, res) => {
     try {
         let id = req.params.id;
+        if (!id.match(/^[0-9a-fA-F]{24}$/))
+            return res.status(200).json({ status: 0, message: "Post is not exist" });
         const post = await Post.findById(id)
             .populate({
                 path: 'id_author',
@@ -281,7 +302,7 @@ export const getPostById = async (req, res) => {
                 if (save_post && save_post.list_post.indexOf(id) != -1) data.isSaved = true
             }
             else data.isSaved = false
-            res.status(200).json({ data, message: "Success" });
+            res.status(200).json({ status:1, data, message: "Success" });
         }
         else res.status(200).json({ message: "Post not exist" })
     } catch (error) {
@@ -327,7 +348,7 @@ export const getPostByIdUser = async (req, res) => {
                 post._doc.isSaved = true;
             else post._doc.isSaved = false;
         }
-        res.status(200).json({ data: posts, message: "Success" })
+        res.status(200).json({ status:1, data: posts, message: "Success" })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
@@ -343,14 +364,25 @@ export const updatePost = async (req, res) => {
         if (data.ingredients.length === 0 || data.directions.length === 0)
             return res.status(200).json({ status: 0, message: 'Invalid information: the title, description, ingredients, thumbnail_image fields blank are not empty' })
         let id_post = req.params.id;
+        //check id_post
+        if (!id_post.match(/^[0-9a-fA-F]{24}$/))
+            return res.status(200).json({ status: 0, message: "Post is not exist" });
         const post = await Post.findById(id_post);
         if (!post)
-            return res.status(400).json({ message: "Post is not exist" });
+            return res.status(400).json({ status: 0, message: "Post is not exist" });
 
         const base64_replace = data.thumbnail_image.replace(/^data:([A-Za-z-+/]+);base64,/, '');
         const isBase64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
         let check = isBase64.test(base64_replace);
-        console.log(check);
+        //console.log(check);
+        //Check thumbnail image
+        const thumbnail_default = 'http://localhost:5000/post/image/' + id_post + '_thumnail_image';
+        if (!check) {
+            let check_thumbnail = data.thumbnail_image.split('.')[0]
+            //console.log(check_thumbnail);
+            if (check_thumbnail != thumbnail_default)
+                return res.status(200).json({ status: 0, message: "Invalide Image" })
+        }
         let thumbnail_image = data.thumbnail_image;
         if (check) {
             let thumbnail_name = id_post + '_thumnail_image';
@@ -359,10 +391,10 @@ export const updatePost = async (req, res) => {
         }
 
         let ingredients = data.ingredients;
-        let index_ingredients = [];
+        let index_ingredients = "";
         ingredients.forEach(ingredient => {
             let removeVNTones_ingredient = removeVietnameseTones(ingredient.name);
-            index_ingredients.push(removeVNTones_ingredient);
+            index_ingredients = removeVNTones_ingredient + " " + index_ingredients;
         });
         const updatePost = {
             title: data.title,
@@ -383,7 +415,7 @@ export const updatePost = async (req, res) => {
         //update
         await Post.findByIdAndUpdate(id_post, updatePost, { useFindAndModify: true });
         await PostDetail.findOneAndUpdate({ id_post }, updateDetailPost, { useFindAndModify: true });
-        res.status(200).json({ message: "Update Success" })
+        res.status(200).json({ status: 0, message: "Update Success" })
 
     } catch (error) {
         res.status(400).json({ message: error.message })
@@ -395,11 +427,15 @@ export const updatePost = async (req, res) => {
 export const deletePostById = async (req, res) => {
     try {
         let id_post = req.params.id;
-        const post = await Post.findById(id_post);
+        //check id_post
+        if (!id_post.match(/^[0-9a-fA-F]{24}$/))
+            return res.status(200).json({ status: 0, message: "Post is not exist" });
+
+        const post = await Post.findOne({ _id: id_post, id_author: req.userID });
 
         //console.log(save_post)
         if (!post)
-            return res.status(200).json({ message: "Post is not exist" })
+            return res.status(200).json({ status: 0, message: "Post is not exist" })
         await Post.findByIdAndDelete(id_post, { useFindAndModify: true })
         await PostDetail.findOneAndDelete({ id_post }, { useFindAndModify: true });
         const nameImage = post.thumbnail_image.split('/')
@@ -416,7 +452,7 @@ export const deletePostById = async (req, res) => {
             if (err) console.error(err);
             console.log('File has been Deleted');
         })
-        res.status(200).json({ message: "Delete Success" })
+        res.status(200).json({ status: 1, message: "Delete Success" })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
@@ -433,7 +469,7 @@ export const deleteManyPost = async (req, res) => {
                 list_post:
                     { $in: list_post_delete }
             }
-        }, {useFindAndModify: true});
+        }, { useFindAndModify: true });
         //console.log(save_post)
 
         let nameImage;
@@ -444,15 +480,20 @@ export const deleteManyPost = async (req, res) => {
         const list_post = await Post.find({
             _id: {
                 $in: list_post_delete
-            }
+            },
+            id_author: req.userID
         })
 
         //Delete Post
-        await Post.deleteMany({
+        const delete_success = await Post.deleteMany({
             _id: {
                 $in: list_post_delete
-            }
+            },
+            id_author: req.userID
         }, { useFindAndModify: true })
+        //console.log(delete_success.deletedCount);
+        if (delete_success.deletedCount === 0)
+            return res.status(200).json({ status: 0, message: "Delete faile" })
         //Delete Detail
         await PostDetail.deleteMany({
             id_post: {
@@ -507,7 +548,7 @@ export const deleteAllPostByIdUser = async (req, res) => {
                 list_post:
                     { $in: list_id_post }
             }
-        }, {useFindAndModify: true});
+        }, { useFindAndModify: true });
         console.log(save_post)
         //delete like
         await likePost.deleteMany({
@@ -537,7 +578,7 @@ export const randomPost = async (req, res) => {
                 select: 'firstname lastname avatar'
             });
         //console.log(random)
-        res.status(200).json({ data: data, message: "Success" });
+        res.status(200).json({ status: 1, data: data, message: "Success" });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -545,76 +586,139 @@ export const randomPost = async (req, res) => {
 
 export const searchPost = async (req, res) => {
     try {
+        let paging, all_post, data, save_post;
         const limit = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
         const current_page = req.query.page || CURRENT_PAGE_DEFAULT;
+
+        if ((req.query.page && !Number.isFinite(parseInt(req.query.page))) || (req.query.limit && !Number.isFinite(parseInt(req.query.limit))))
+            return res.status(200).json({ status: 0, message: "limit and page must be a Number" })
+
+        if ((req.query.page && parseInt(req.query.page) < 0) || (req.query.limit && parseInt(req.query.limit) < 0))
+            return res.status(200).json({ status: 0, message: "limit and page must greater than 0" })
         //console.log("Search")
         const query = req.query.q;
         //console.log(query)
-        const all_post = await Post.find(
-            { $text: { $search: query } },
-            { score: { $meta: "textScore" } })
-            .sort({ score: { $meta: "textScore" } })
+        if (query) {
+            all_post = await Post.find(
+                { $text: { $search: query } },
+                { score: { $meta: "textScore" } })
+                .sort({ score: { $meta: "textScore" } })
 
-        let data = await Post.find(
-            { $text: { $search: query } },
-            { score: { $meta: "textScore" } })
-            .sort({ score: { $meta: "textScore" } })
-            .populate({
-                path: 'id_author',
-                select: 'firstname lastname avatar'
-            })
-            .limit(limit)
-            .skip(limit * (current_page - 1))
+            data = await Post.find(
+                { $text: { $search: query } },
+                { score: { $meta: "textScore" } })
+                .sort({ score: { $meta: "textScore" } })
+                .populate({
+                    path: 'id_author',
+                    select: 'firstname lastname avatar'
+                })
+                .limit(limit)
+                .skip(limit * (current_page - 1))
+            if (req.userID) {
+                //console.log(req.userID)
+                save_post = await savePost.findOne({ id_user: req.userID });
+                //console.log()
+            }
 
-        let save_post
-        if (req.userID) {
-            console.log(req.userID)
-            save_post = await savePost.findOne({ id_user: req.userID });
-            console.log()
-        }
+            //like post
+            let temp;
+            for (let post of data) {
+                temp = await likePost.findOne({ id_post: post._id })
+                if (temp) {
+                    post._doc.numberLike = temp.list_user.length;
+                    //user like post
 
-        //like post
-        let temp;
-        for (let post of data) {
-            temp = await likePost.findOne({ id_post: post._id })
-            if (temp) {
-                post._doc.numberLike = temp.list_user.length;
-                //user like post
-
-                if (req.userID && temp.list_user.indexOf(req.userID) != -1) {
-                    post._doc.isLike = true;
+                    if (req.userID && temp.list_user.indexOf(req.userID) != -1) {
+                        post._doc.isLike = true;
+                    }
+                    else post._doc.isLike = false
                 }
-                else post._doc.isLike = false
+                else {
+                    post._doc.isLike = false;
+                    post._doc.numberLike = 0;
+                }
+
+                if (save_post && save_post.list_post.indexOf(post._id) != -1)
+                    post._doc.isSaved = true;
+                else post._doc.isSaved = false;
+            }
+
+            const total = all_post.length;
+            let from = 0;
+            let to = 0;
+            if ((current_page - 1) * limit + 1 <= total) {
+                from = (current_page - 1) * limit + 1;
+                to = from + data.length - 1;
             }
             else {
-                post._doc.isLike = false;
-                post._doc.numberLike = 0;
+                from = to = 0
             }
-
-            if (save_post && save_post.list_post.indexOf(post._id) != -1)
-                post._doc.isSaved = true;
-            else post._doc.isSaved = false;
-        }
-
-        const total = all_post.length;
-        let from = 0;
-        let to = 0;
-        if ((current_page - 1) * limit + 1 <= total) {
-            from = (current_page - 1) * limit + 1;
-            to = from + data.length - 1;
+            paging = {
+                "current_page": current_page,
+                "limit": limit,
+                "from": from,
+                "to": to,
+                "total": total
+            }
+            //console.log(data);
         }
         else {
-            from = to = 0
+            all_post = await Post.find();
+            data = await Post.find()
+                .populate({
+                    path: 'id_author',
+                    select: 'firstname lastname avatar'
+                })
+                .limit(limit)
+                .skip(limit * (current_page - 1))
+
+            if (req.userID) {
+                //console.log(req.userID)
+                save_post = await savePost.findOne({ id_user: req.userID });
+            }
+
+            //like post
+            let temp;
+            for (let post of data) {
+                temp = await likePost.findOne({ id_post: post._id })
+                if (temp) {
+                    post._doc.numberLike = temp.list_user.length;
+                    //user like post
+
+                    if (req.userID && temp.list_user.indexOf(req.userID) != -1) {
+                        post._doc.isLike = true;
+                    }
+                    else post._doc.isLike = false
+                }
+                else {
+                    post._doc.isLike = false;
+                    post._doc.numberLike = 0;
+                }
+
+                if (save_post && save_post.list_post.indexOf(post._id) != -1)
+                    post._doc.isSaved = true;
+                else post._doc.isSaved = false;
+            }
+
+            const total = all_post.length;
+            let from = 0;
+            let to = 0;
+            if ((current_page - 1) * limit + 1 <= total) {
+                from = (current_page - 1) * limit + 1;
+                to = from + data.length - 1;
+            }
+            else {
+                from = to = 0
+            }
+            paging = {
+                "current_page": current_page,
+                "limit": limit,
+                "from": from,
+                "to": to,
+                "total": total
+            }
         }
-        let paging = {
-            "current_page": current_page,
-            "limit": limit,
-            "from": from,
-            "to": to,
-            "total": total
-        }
-        //console.log(data);
-        res.status(200).json({ data: data, paging: paging, message: "success" })
+        res.status(200).json({ status: 1, data: data, paging: paging, message: "success" })
 
     } catch (error) {
         res.status(400).json({ message: error.message });
