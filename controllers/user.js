@@ -6,6 +6,7 @@ import _ from 'lodash';
 import dotenv from 'dotenv';
 dotenv.config();
 import mailgun from "mailgun-js";
+import Joi from "joi"
 
 const DOMAIN = "sandboxf323020c2b1642a691a15da4ac044d8b.mailgun.org";
 const mg = mailgun({apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN});
@@ -52,13 +53,26 @@ export const updateUserInfo = async (req, res) => {
 //@access private
 export const updatePassword = async (req, res) => {
     try {
-        const {oldPassword, newPassword} = req.body
-        if(!oldPassword || !newPassword){
+        const {oldPassword, newPassword, confirmPassword} = req.body
+        const rule = Joi.object().keys({
+            oldPassword, 
+            newPassword: Joi.string().min(8).pattern(new RegExp("^(?=.*?[0-9])(?=.*?[#?!@$%^&*-])")),
+            confirmPassword
+        }); 
+        const result = rule.validate(req.body); 
+        const { value, error } = result; 
+        if(!oldPassword || !newPassword || ! confirmPassword){
             return res.status(400).json({success: false, message: "Missing field"})
         }
-        // if(oldPassword === newPassword){
-        //     return res.status(422).json({success:false, message: "Newpassword must be not same oldpassword" })
-        // }
+        if (error) { 
+            return res.status(422).json({ 
+                success: false,
+                message: "Mật khẩu phải có tổi thiểu 8 kí tự, bao gồm chữ số và một số kí tự đặc biệt."  
+            }) 
+          }
+        if(newPassword !== confirmPassword){
+            return res.status(422).json({success:false, message: "Newpassword and confirmPassword don't match" })
+        }
         const user = await User.findById(req.userID)
         if (user) {
             const passwordValid = await bcrypt.compareSync(oldPassword, user.password)
@@ -120,11 +134,26 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
     try{
         const resetLink = req.params.token 
-        const {newPass} = req.body
-        if(!newPass){
+        const {newPass, confirmPass} = req.body
+        const rule = Joi.object().keys({ 
+            newPass: Joi.string().min(8).pattern(new RegExp("^(?=.*?[0-9])(?=.*?[#?!@$%^&*-])")),
+            confirmPass
+        }); 
+        const result = rule.validate(req.body); 
+        const { value, error } = result; 
+        if(!newPass || !confirmPass){
             return res.status(400).json({success: false, message: 'Missing field'})
         }
-       
+        if (error) { 
+            return res.status(422).json({ 
+                success: false,
+              message: "Mật khẩu phải có tổi thiểu 8 kí tự, bao gồm chữ số và một số kí tự đặc biệt."  
+            }) 
+          }
+        if(newPass !== confirmPass){
+            return res.status(422).json({success:false, message: "Newpassword and confirmPassword don't match" })
+        }
+
         if(resetLink){
             jwt.verify(resetLink, process.env.RESET_PASSWORD_KEY, async (err, decodedData) =>{
                 if(err){

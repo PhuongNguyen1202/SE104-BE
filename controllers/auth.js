@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
 import fetch from 'node-fetch';
 import {OAuth2Client} from 'google-auth-library';
+import Joi from "joi"
 
 import User from '../models/User.js'
 import Role from '../models/Role.js'
@@ -15,10 +16,24 @@ const client = new OAuth2Client("811148561616-u5o162igd4bdqkb26lan40e7t356hh7f.a
 
 export const registerUser = async(req, res) => {
     const {firstname, lastname, email, password, gender} = req.body
+    const rule = Joi.object().keys({
+        firstname,
+        lastname,
+        email, 
+        password: Joi.string().min(8).pattern(new RegExp("^(?=.*?[0-9])(?=.*?[#?!@$%^&*-])")),
+        gender 
+    }); 
+    const result = rule.validate(req.body); 
+    const { value, error } = result; 
     if(!firstname || !lastname || !email || !password){
         return res.status(400).json({success: false, message: 'Missing field'})
     }
-
+    if (error) { 
+        return res.status(422).json({ 
+            success: false,
+            message: "Mật khẩu phải có tổi thiểu 8 kí tự, bao gồm chữ số và một số kí tự đặc biệt."  
+        }) 
+      }
     try{
         const user_email = await User.findOne({email})
 
@@ -146,7 +161,7 @@ export const loginFacebook = async (req, res) => {
     })
     .then(response => response.json())
     .then(response => {
-        const {email,name, gender} = response
+        const {id, email,name, gender} = response
         console.log(response)
         User.findOne({email}).exec(async (err, user) => {
             if(err) {
