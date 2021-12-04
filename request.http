@@ -32,10 +32,10 @@ POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
-    "firstname": "Vy",
-    "lastname": "Ngô",
-    "email": "bap4@gmail.com",
-    "password": "1234",
+    "firstname": "Vương",
+    "lastname": "Vương",
+    "email": "ha@gmail.com",
+    "password": "maomao@94",
     "gender": "nam"
 }
 ###
@@ -65,7 +65,7 @@ Content-Type: application/json
 
 {
     "password": "1234",
-    "email": "vy@gmail.com"
+    "email": "vy2@gmail.com"
 }
 ####
 POST http://localhost:5000/api/auth/login
@@ -79,8 +79,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "gaugau@gmail.com",
-    "password": "1234"
+    "email": "ha@gmail.com",
+    "password": "maomao@94"
 }
 ####
 POST http://localhost:5000/api/auth/login
@@ -139,11 +139,11 @@ Content-Type: application/json
 }
 ####Hiển thông báo
 PUT http://localhost:5000/api/user/changepassword
-Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2Mzc5MzU0NjZ9.lfXQ0HID-MUM8iClfyyxuDeTT5E_L8aePwrOKxj_EpE
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWFhZjBhOTA1YzIxNWY3M2JjOWExZGQiLCJpYXQiOjE2Mzg1OTI2ODF9.gFzHCN1NMnojJaFWZND_E9pXNDKKCV9JTwd-dfgjvzU
 Content-Type: application/json
 
 {
-    "oldPassword": "1",
+    "oldPassword": "maomao@94",
     "newPassword": "1234"
 }
 ####Hiển thông báo
@@ -164,12 +164,13 @@ Content-Type: application/json
 }
 ###
 PUT http://localhost:5000/api/user/changepassword
-Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2Mzc5Mzk1Mjd9.mG_vHh6srxUpndXjt2F9FBl0VAOV_TI4byuity8TEVo
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWFhZjBhOTA1YzIxNWY3M2JjOWExZGQiLCJpYXQiOjE2Mzg1OTMwMjh9.cZvYne-CmF1D1oZLCO_KGbdRlhlL_rjtRfwKPPBy8WA
 Content-Type: application/json
 
 {
-    "oldPassword": "1234",
-    "newPassword": "4321"
+    "oldPassword": "maomao@94",
+    "newPassword": "maomao94",
+    "confirmPassword": "maomao94"
 }
 ###
 POST  http://localhost:5000/api/auth/add-user
@@ -351,11 +352,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2N
 GET http://localhost:5000/post
 ###
 POST http://localhost:5000/save_post/saved
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEzNTY4ZmY2ZmI0MGFkNDQwOGEwYmQiLCJpYXQiOjE2MzgzMjk1NjB9.t82M_zHkGh-AQzJ9eYDnGSdqEEaaSzg-xpGuSFUOYp4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MThmODlhMWZiM2I0YjcwYjAxZWIwZWQiLCJpYXQiOjE2MzgzNjM5MDl9.F1kV4Pz87DPVlG2tYo5vWFJL4sybGEojDHgaaIrYQhc
 Content-Type: application/json
 
 {
-    "id_post" : "61a6ea6882afe6202ecbe7e3"
+    "id_post" : "61a2e5c7bb32fde5dcb13b14"
 }
 ###
 GET http://localhost:5000/save_post
