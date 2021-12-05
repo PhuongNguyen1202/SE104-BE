@@ -389,7 +389,7 @@ export const managesPost = async (req, res) => {
 
 export const getPostByIdUser = async (req, res) => {
     try {
-        let id_user = req.body.id_user;
+        let id_user = req.params.id_user;
         //console.log(id_user);
 
         const current_page = parseInt(req.query.page) || CURRENT_PAGE_DEFAULT;
