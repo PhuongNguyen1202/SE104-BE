@@ -540,7 +540,7 @@ export const deletePostById = async (req, res) => {
         if (!id_post.match(/^[0-9a-fA-F]{24}$/))
             return res.status(200).json({ status: 0, message: "Post is not exist" });
 
-        const post = await Post.findOne({ _id: id_post, id_author: req.userID });
+        const post = await Post.findOne({ _id: id_post});
 
         //console.log(save_post)
         if (!post)
