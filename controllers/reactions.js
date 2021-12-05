@@ -11,6 +11,9 @@ export const likeAPost = async (req, res) => {
         console.log("LIKE A POST");
         const id_user = req.userID;
         const id_post = req.params.id_post;
+        //Kiểm tra kí tự 
+        if (!id_post.match(/^[0-9a-fA-F]{24}$/))
+            return res.status(200).json({ success: 0, message: "Post is not exist" });
         //Kiểm tra id_post có tồn tại không
         const checkpost = await Post.findById(id_post);
         if (checkpost) {
@@ -22,14 +25,14 @@ export const likeAPost = async (req, res) => {
                 console.log(itemIndex);
                 if (itemIndex) {
                     //bài post đã được user like trước đó, thông báo
-                    return res.status(200).json({ "success": 0, message: "Before post was liked!" })
+                    return res.status(200).json({ success: 0, message: "Before post was liked!" })
                 } else {
                     //user chưa like bài post, thêm vào
                     like_post.list_user.push(id_user);
                 }
                 const data = await like_post.save();
                 console.log(data);
-                return res.status(200).json({ "success": 1, message: "Liked success" });
+                return res.status(200).json({ success: 1, message: "Liked success" });
             }
             else {//  chưa có likePost
                 const newlikePost = new likePost({
@@ -40,11 +43,11 @@ export const likeAPost = async (req, res) => {
                 });
                 const aLikePost = await newlikePost.save()
                 console.log(aLikePost);
-                res.status(200).json({ "success": 1, message: "Liked success" });
+                res.status(200).json({ success: 1, message: "Liked success" });
             }
         }
         else {//id_post không tồn tại
-            return res.status(200).json({ success: 0, message: "Post not exist!" })
+            return res.status(200).json({ success: 0, message: "Post is not exist!" })
 
         }
     } catch (error) {
@@ -58,12 +61,20 @@ export const unlikePost = async (req, res) => {
         console.log('UNLIKE A POST');
         const id_user = req.userID;
         const id_post = req.params;
-        await likePost.findOneAndUpdate(id_post, {
-            $pull: {
-                list_user: id_user
-            }
-        }, { new: true });
-        res.status(200).json({ message: "Unliked success" });
+        if (!id_post.match(/^[0-9a-fA-F]{24}$/))
+            return res.status(200).json({ success: 0, message: "Post is not exist" });
+        const checkpost = await Post.findById(id_post);
+        if (checkpost) {
+            await likePost.findOneAndUpdate(id_post, {
+                $pull: {
+                    list_user: id_user
+                }
+            }, { new: true });
+            res.status(200).json({ message: "Unliked success" });
+        }
+        else {//id_post không tồn tại
+            return res.status(200).json({ success: 0, message: "Post is not exist!" })
+        }
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
