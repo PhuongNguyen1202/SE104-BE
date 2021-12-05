@@ -315,11 +315,26 @@ export const getPostByIdUser = async (req, res) => {
     try {
         let id_user = req.userID;
         //console.log(id_user);
+
+        const current_page = parseInt(req.query.page) || CURRENT_PAGE_DEFAULT;
+        const per_page = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
+
+        if ((req.query.page && !Number.isFinite(parseInt(req.query.page))) || (req.query.limit && !Number.isFinite(parseInt(req.query.limit))))
+            return res.status(200).json({ status: 0, message: "limit and page must be a Number" });
+
+        if ((req.query.page && parseInt(req.query.page) < 0) || (req.query.limit && parseInt(req.query.limit) < 0))
+            return res.status(200).json({ status: 0, message: "limit and page must greater than 0" });
+        
+        const all_post = await Post.find({id_author: id_user});
+
         let posts = await Post.find({ id_author: id_user })
             .populate({
                 path: 'id_author',
                 select: 'firstname lastname avatar'
-            });
+            })
+            .limit(per_page)
+            .skip(per_page * (current_page - 1));
+
         //get list saved post
         let save_post
         if (req.userID) {
@@ -348,7 +363,25 @@ export const getPostByIdUser = async (req, res) => {
                 post._doc.isSaved = true;
             else post._doc.isSaved = false;
         }
-        res.status(200).json({ status:1, data: posts, message: "Success" })
+
+        const total = all_post.length;
+        let from = 0;
+        let to = 0;
+        if ((current_page - 1) * per_page + 1 <= total) {
+            from = (current_page - 1) * per_page + 1;
+            to = from + posts.length - 1;
+        }
+        else {
+            from = to = 0
+        }
+        let paging = {
+            "current_page": current_page,
+            "limit": per_page,
+            "from": from,
+            "to": to,
+            "total": total
+        }
+        res.status(200).json({ status:1, data: posts, paging: paging, message: "Success" })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
