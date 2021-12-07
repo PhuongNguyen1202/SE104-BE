@@ -4,7 +4,6 @@ import Post from "../models/post.js";
 
 
 //like một bài post
-//
 export const likeAPost = async (req, res) => {
 
     try {
@@ -22,7 +21,7 @@ export const likeAPost = async (req, res) => {
             const like_post = await likePost.findOne({ id_post });
             if (like_post) { // đã có likePost
                 let itemIndex = like_post.list_user.includes(id_user);
-                console.log(itemIndex);
+                //console.log(itemIndex);
                 if (itemIndex) {
                     //bài post đã được user like trước đó, thông báo
                     return res.status(200).json({ success: 0, message: "Before post was liked!" })
@@ -42,7 +41,7 @@ export const likeAPost = async (req, res) => {
                     ]
                 });
                 const aLikePost = await newlikePost.save()
-                console.log(aLikePost);
+                //console.log(aLikePost);
                 res.status(200).json({ success: 1, message: "Liked success" });
             }
         }
@@ -60,17 +59,26 @@ export const unlikePost = async (req, res) => {
     try {
         console.log('UNLIKE A POST');
         const id_user = req.userID;
-        const id_post = req.params;
+        const id_post = req.params.id_post;
+        //console.log (id_post);
         if (!id_post.match(/^[0-9a-fA-F]{24}$/))
             return res.status(200).json({ success: 0, message: "Post is not exist" });
         const checkpost = await Post.findById(id_post);
         if (checkpost) {
-            await likePost.findOneAndUpdate(id_post, {
+            const like_post = await likePost.findOne({ id_post });
+            let checkuser = like_post.list_user.includes(id_user);
+            if (checkuser)//user đã từng like bài post
+            {
+            await likePost.findOneAndUpdate({id_post}, {
                 $pull: {
                     list_user: id_user
                 }
             }, { new: true });
-            res.status(200).json({ message: "Unliked success" });
+            res.status(200).json({ success: 1,message: "Unliked success" });
+        }
+        else {//user chưa từng like
+            return res.status(200).json({ success: 0, message: "User not like this post" })
+        }
         }
         else {//id_post không tồn tại
             return res.status(200).json({ success: 0, message: "Post is not exist!" })
