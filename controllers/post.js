@@ -1,5 +1,6 @@
 'use strict';
 import fs from 'fs';
+import dotenv from 'dotenv';
 import Post from '../models/post.js';
 import PostDetail from '../models/post_detail.js';
 import Ingredient from '../models/ingredients.js';
@@ -9,10 +10,10 @@ import savePost from "../models/savePost.js";
 
 
 //Các function dùng để lưu ảnh
-const DEFAULT_FOLDER_UPLOAD_IMAGE = './public/post/image';
-const URL_HOST = 'http://localhost:5000/';
-const LIMIT_OF_POST_DEFAULT = 20;
-const CURRENT_PAGE_DEFAULT = 1;
+const DEFAULT_FOLDER_UPLOAD_IMAGE = process.env.DEFAULT_FOLDER_UPLOAD_IMAGE;
+const URL_HOST = process.env.URL_HOST;
+const LIMIT_OF_POST_DEFAULT = process.env.LIMIT_OF_POST_DEFAULT;
+const CURRENT_PAGE_DEFAULT = process.env.CURRENT_PAGE_DEFAULT;
 
 const solvePathURL = path => {
     let new_path = path.split('/').slice(2).join('/');
