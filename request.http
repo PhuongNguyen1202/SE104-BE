@@ -245,7 +245,7 @@ Content-Type: application/json
     "gender": "nữ"
 }
 ###
-POST  http://localhost:5000/api/auth/add-user
+POST  http://localhost:5000/api/admin/add-user
 Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEzNDhjZGZkMTdkNzU3Njg0ZjVhMGYiLCJpYXQiOjE2MzgwOTMzNjh9.Z---GiPZqLItUhB1EJ5NMcgih-ngr_yru1IIqjSpb1E
 Content-Type: application/json
 
@@ -255,7 +255,7 @@ Content-Type: application/json
     "email": "vyngo@gmail.com",
     "password": "1234",
     "gender": "nữ",
-    "role": "user"
+    "role": "admin"
 }
 ###
 POST http://localhost:5000/api/user/forgot-password
