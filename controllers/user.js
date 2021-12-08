@@ -113,7 +113,7 @@ export const forgotPassword = async (req, res) => {
             subject: 'Reset Password Link',
             html: `
                         <h2>Nhấn vào link sau đây để reset password</h2>
-                        <p>${process.env.CLIENT_URL}/resetpassword/${token}`
+                        <a>${process.env.CLIENT_URL}/resetpassword/${token}</a>`
         };
 
         const userupdate = await User.findByIdAndUpdate(user._id, { resetLink: token }, { new: true });
@@ -147,7 +147,7 @@ export const resetPassword = async (req, res) => {
         if (error) { 
             return res.status(422).json({ 
                 success: false,
-              message: "Mật khẩu phải có tổi thiểu 8 kí tự, bao gồm chữ số và một số kí tự đặc biệt."  
+                message: "Mật khẩu phải có tổi thiểu 8 kí tự, bao gồm chữ số và một số kí tự đặc biệt."  
             }) 
           }
         if(newPass !== confirmPass){
