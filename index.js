@@ -14,8 +14,6 @@ import ingrerRouters from './routes/ingredients.js'
 import savePostRoutes from './routes/savePost.js';
 import reactionsRoutes from './routes/reactions.js';
 import roleRoutes from './routes/role.js';
-import rolePermissionRuters from './routes/role-permission.js'
-
 dotenv.config();
 const app = express();
 
@@ -47,7 +45,6 @@ app.use(express.json())
 
 app.use('/post', postRouters);
 app.use('/ingredient', ingrerRouters);
-app.use('/role-permission', rolePermissionRuters)
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter)
 app.use('/api/admin', adminRouter)
