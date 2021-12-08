@@ -11,13 +11,15 @@ import jwt from 'jsonwebtoken';
 
 const DEFAULT_FOLDER_UPLOAD_IMAGE = './public/post/image';
 import fs from 'fs';
+const CURRENT_PAGE_DEFAULT = 1
+const LIMIT_OF_DEFAULT = 10
 //@route api/addmin/get-users
 //@desc get list users except resetlink
 //@access private
 export const getAllUsers = async(req, res) => {
     //check limit and page
     const current_page = parseInt(req.query.page) || CURRENT_PAGE_DEFAULT;
-    const per_page = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
+    const per_page = parseInt(req.query.limit) || LIMIT_OF_DEFAULT;
 
     if ((req.query.page && !Number.isFinite(parseInt(req.query.page))) || (req.query.limit && !Number.isFinite(parseInt(req.query.limit))))
         return res.status(200).json({ status: 0, message: "limit and page must be a Number" })
@@ -63,7 +65,7 @@ export const getAllUsers = async(req, res) => {
         }
         if (natural === -1) paging.filter = "new"
         else paging.query = "default"
-        return res.status(200).json({succes: true, data: users})
+        return res.status(200).json({succes: true, data: users, paging: paging})
     }
     catch (err){
         return res.status(500).json({succes: false, message: err.message})
