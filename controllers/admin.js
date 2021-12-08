@@ -15,12 +15,54 @@ import fs from 'fs';
 //@desc get list users except resetlink
 //@access private
 export const getAllUsers = async(req, res) => {
+    //check limit and page
+    const current_page = parseInt(req.query.page) || CURRENT_PAGE_DEFAULT;
+    const per_page = parseInt(req.query.limit) || LIMIT_OF_POST_DEFAULT;
+
+    if ((req.query.page && !Number.isFinite(parseInt(req.query.page))) || (req.query.limit && !Number.isFinite(parseInt(req.query.limit))))
+        return res.status(200).json({ status: 0, message: "limit and page must be a Number" })
+
+    if ((req.query.page && parseInt(req.query.page) < 0) || (req.query.limit && parseInt(req.query.limit) < 0))
+        return res.status(200).json({ status: 0, message: "limit and page must greater than 0" })
+
+    let natural;
+    const query = req.query.q;
+    if (query == 'new')
+        natural = -1;
+    else natural = 1;
     try{
-        const users = await User.find({}, {resetLink: 0}).populate('role')
-        console.log(users.role)
+        let all_users = await User.find({}, {resetLink: 0})
+        let users = await User.find({}, {resetLink: 0})
+            .sort({ $natural: natural })
+            .populate({
+                path: 'role',
+                select: 'role_name'
+            })
+            .limit(per_page)
+            .skip(per_page * (current_page - 1))
+        users.forEach(user => console.log(user.role.role_name))
         if(!users){
             return res.status(404).json({succes: false, message: "Can not get all data"})
         }
+        const total = all_users.length;
+        let from = 0;
+        let to = 0;
+        if ((current_page - 1) * per_page + 1 <= total) {
+            from = (current_page - 1) * per_page + 1;
+            to = from + users.length - 1;
+        }
+        else {
+            from = to = 0
+        }
+        let paging = {
+            "current_page": current_page,
+            "limit": per_page,
+            "from": from,
+            "to": to,
+            "total": total
+        }
+        if (natural === -1) paging.filter = "new"
+        else paging.query = "default"
         return res.status(200).json({succes: true, data: users})
     }
     catch (err){
@@ -282,7 +324,10 @@ export const addUser = async(req, res) => {
 export const getUserById = async(req, res) => {
     try{
         let user_id = req.params.id
-        let profile = await User.findById(user_id).populate("role")
+        let profile = await User.findById(user_id).populate({
+            path: 'role',
+            select: 'role_name'
+        })
         return res.status(200).json({success: true, data: profile})
 
     } catch (err){

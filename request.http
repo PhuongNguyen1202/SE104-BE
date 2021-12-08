@@ -64,8 +64,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "password": "1234",
-    "email": "vy2@gmail.com"
+    "password": "ngovy-2000",
+    "email": "o@gmail.com"
 }
 ####
 POST http://localhost:5000/api/auth/login
@@ -94,12 +94,12 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "b@gmail.com",
+    "email": "vy2@gmail.com",
     "password": "1234"
 }
 ####
 GET http://localhost:5000/api/user/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2MzgwMjM4NTd9.SmGbveaSGexZHAiUZSw9VbUBcWK_TH2pka4rk8x03WI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWIwMjI4MDdiZjFmMTAyMGFlN2VmNWIiLCJpYXQiOjE2Mzg5MzQ2ODR9.Lu55ocTDt7diZ7a0dPFWH6RJz-nQ-4lOGcVq4VJ2QKA
 ####
 PUT http://localhost:5000/api/user/update
 Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2MzgwMjU0MDJ9.YUXp73rFu4ByzVu30ymgC57qeHMkhELZqHYqBRxhR24
@@ -246,14 +246,14 @@ Content-Type: application/json
 }
 ###
 POST  http://localhost:5000/api/admin/add-user
-Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWEzNDhjZGZkMTdkNzU3Njg0ZjVhMGYiLCJpYXQiOjE2MzgwOTMzNjh9.Z---GiPZqLItUhB1EJ5NMcgih-ngr_yru1IIqjSpb1E
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWIwMjAyNDUyMzU5MGFlNjYwOGM2NmYiLCJpYXQiOjE2Mzg5MzMwODV9.HoEwruIr4OqG-0-LXh5q1j5Olxpcy176biymwKhT-po
 Content-Type: application/json
 
 {
     "firstname": "Ngô",
     "lastname": "Vy",
-    "email": "vyngo@gmail.com",
-    "password": "1234",
+    "email": "o@gmail.com",
+    "password": "ngovy-2000",
     "gender": "nữ",
     "role": "admin"
 }
@@ -310,7 +310,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWExM
 }
 ###
 GET http://localhost:5000/api/admin/get-users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgyOTE2NTl9.ggTtS-UVWhxJLPHFirq5A9QuvnoW_NMn3C0kD2dV7ws
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWIwMjI4MDdiZjFmMTAyMGFlN2VmNWIiLCJpYXQiOjE2Mzg5NTIzMzR9.gjcAdxqAeBG3nR2futP0cSznmmBY4fUhPz0y8UfVl04
 ###
 DELETE http://localhost:5000/api/admin/delete-user/61a5f57cf952a5f54dcac7d4
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgzNDc4NDV9.dgO4E9688-l4fQ1g8H_EVArlvCI8N0AbG5UrdW2y8g4
@@ -367,3 +367,6 @@ POST http://localhost:5000/reaction/liked/61a30120decf91b23876f751
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MThmODk4OWZiM2I0YjcwYjAxZWIwZTciLCJpYXQiOjE2MzgzNTA2NjJ9.aqxyJD-GgZhapDRM9PjJIRzs6kEXPL_Do4dEcyD-CZg
 ###
 POST http://localhost:5000/api/login-facebook
+###
+GET http://localhost:5000/api/admin/user/618f89a1fb3b4b70b01eb0ed
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWIwMjI4MDdiZjFmMTAyMGFlN2VmNWIiLCJpYXQiOjE2Mzg5MzQ2ODR9.Lu55ocTDt7diZ7a0dPFWH6RJz-nQ-4lOGcVq4VJ2QKA

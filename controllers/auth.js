@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import fetch from 'node-fetch';
 import {OAuth2Client} from 'google-auth-library';
 import Joi from "joi"
+import axios from "axios";
 
 import User from '../models/User.js'
 import Role from '../models/Role.js'
@@ -112,14 +113,18 @@ export const login = async (req, res) => {
 export const loginFacebook = async (req, res) => {
     const {userID, accessToken} = req.body
     let urlGraphFacebook = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email,picture,gender&access_token=${accessToken}`
-    fetch(urlGraphFacebook, {
-        method: 'GET'
+    await axios.get(urlGraphFacebook)
+    .then((res) => res.data)
+    .then(data => {
+        email = data.email;
+        name = data.name;
+        })
+    .catch(err => {
+            return res.sendStatus(400);
     })
-    .then(response => response.json())
-    .then(response => {
-        const { email,name} = response
-        console.log(response)
+    try{
         User.findOne({email}).exec(async (err, user) => {
+
             if(err) {
                 return res.status(400).json({success: false, message: err.message})
             } else{
@@ -150,9 +155,11 @@ export const loginFacebook = async (req, res) => {
                         accessToken
                     })
                 }
-            }
-        })
-    })
+                }
+            })
+    } catch(err){
+        return res.status(500).json({success: false, message: err.message})
+    }
 }
 
 //@route api/auth/login-google
