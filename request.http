@@ -309,8 +309,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWExM
     
 }
 ###
-GET http://localhost:5000/api/admin/get-users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWIwMjI4MDdiZjFmMTAyMGFlN2VmNWIiLCJpYXQiOjE2Mzg5NTIzMzR9.gjcAdxqAeBG3nR2futP0cSznmmBY4fUhPz0y8UfVl04
+GET http://localhost:5000/api/admin/get-users?page=1&limit=2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWIwMjI4MDdiZjFmMTAyMGFlN2VmNWIiLCJpYXQiOjE2Mzg5NzI2MzN9.n82dRW4MHOwH9f0ZT8dhjY36vONkTdRHHJWnAn1DhCs
 ###
 DELETE http://localhost:5000/api/admin/delete-user/61a5f57cf952a5f54dcac7d4
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgzNDc4NDV9.dgO4E9688-l4fQ1g8H_EVArlvCI8N0AbG5UrdW2y8g4
@@ -350,7 +350,7 @@ Content-Type: application/json
 DELETE   http://localhost:5000/api/admin/deleteAllUsers
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgzNTA3Njl9.qcCQ3ae_pnzMmPcLJrP3sLKRw82DM5Eaz00rhojWX1s
 ###
-GET http://localhost:5000/post
+GET http://localhost:5000/post?page=1&limit=20
 ###
 POST http://localhost:5000/save_post/saved
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MThmODlhMWZiM2I0YjcwYjAxZWIwZWQiLCJpYXQiOjE2MzgzNjM5MDl9.F1kV4Pz87DPVlG2tYo5vWFJL4sybGEojDHgaaIrYQhc
