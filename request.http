@@ -79,8 +79,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "ha@gmail.com",
-    "password": "maomao@94"
+    "email": "phuong@gmail.com",
+    "password": "1234"
 }
 ####
 POST http://localhost:5000/api/auth/login
@@ -169,8 +169,8 @@ Content-Type: application/json
 
 {
     "oldPassword": "maomao@94",
-    "newPassword": "maomao94",
-    "confirmPassword": "maomao94"
+    "newPassword": "maomao94@",
+    "confirmPassword": "maomao94@"
 }
 ###
 POST  http://localhost:5000/api/auth/add-user
@@ -283,7 +283,8 @@ PUT http://localhost:5000/api/user/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6Ik
 Content-Type: application/json
 
 {
-    "newPass": "4321"
+    "newPass": "ngovy-2000",
+    "confirmPass": "ngovy-2000"
 }
 ###
 PUT http://localhost:5000/api/user/reset-password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWEwYTcxYjZmMGYwMzgwNDRkMDdjYzciLCJpYXQiOjE2MzgwODk2NTMsImV4cCI6MTYzODA5MDg1M30.ycw335zUJ6qfFe1t7y_8t3y2dXTRYPFCFcuB9CGq9ug

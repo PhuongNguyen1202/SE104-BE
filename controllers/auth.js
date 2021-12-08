@@ -105,63 +105,19 @@ export const login = async (req, res) => {
     }
 }
 
-//@route api/auth/addUser
-//@desc post loginform
-//@access private
-export const addUser = async(req, res) => {
-    const {firstname, lastname, email, password, gender, role} = req.body
-    if(!firstname || !lastname || !email || !password || !gender || !role){
-        return res.status(400).json({success: false, message: 'Missing field'})
-    }
-
-    try{
-        const user_email = await User.findOne({email})
-
-        if(user_email){
-            return res.status('400').json({success: false, message: 'Email exist'})
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        let temp = firstname.slice(0,1);
-        const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
-
-        const newUser = new User({email, firstname, lastname, password: hashedPassword, avatar, gender})
-        const newUserRole = await Role.findOne({role_name: role})
-        if(!newUserRole){
-            return res.status(500).json({success: false, message: "Role is null"})
-        }
-        
-        newUser.role = newUserRole._id
-        newUser.save((err) => {
-            if (err) return res.status(500).json({success:false, message: err.message });
-            });
-
-        const accessToken = jwt.sign({userID: newUser._id}, process.env.ACCESS_TOKEN_SECRET)
-        res.json({
-            success: true,
-            message: 'User created successfully',
-            accessToken
-        })
-
-    } catch(error){
-        console.log(error)
-        res.status(500).json({success: false, message: 'Internal server error'})
-    }
-}
 
 //@route api/auth/login-facebook
 //@desc post 
 //@access public
 export const loginFacebook = async (req, res) => {
     const {userID, accessToken} = req.body
-    let urlGraphFacebook = `https://graph.facebook.com/v12.0/${userID}/?fields=id,name,email,gender&access_token=${accessToken}`
+    let urlGraphFacebook = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email,picture,gender&access_token=${accessToken}`
     fetch(urlGraphFacebook, {
         method: 'GET'
     })
     .then(response => response.json())
     .then(response => {
-        const {id, email,name, gender} = response
+        const { email,name} = response
         console.log(response)
         User.findOne({email}).exec(async (err, user) => {
             if(err) {

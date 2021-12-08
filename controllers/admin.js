@@ -5,6 +5,7 @@ import PostDetail from '../models/post_detail.js';
 import savePost from '../models/savePost.js';
 import likePost from '../models/reactions.js'
 import Roles from '../models/Role.js';
+import Joi from "joi"
 
 const DEFAULT_FOLDER_UPLOAD_IMAGE = './public/post/image';
 import fs from 'fs';
@@ -208,5 +209,65 @@ export const deleteAllUsers = async(req, res) => {
         return res.status(200).json({success:true, message: "User deleted" })
     } catch (error) {
         res.status(400).json({message: error.message})
+    }
+}
+
+//@route api/admin/addUser
+//@desc post loginform
+//@access private
+export const addUser = async(req, res) => {
+    const {firstname, lastname, email, password, gender, role} = req.body
+    if(!firstname || !lastname || !email || !password || !gender || !role){
+        return res.status(400).json({success: false, message: 'Missing field'})
+    }
+    const rule = Joi.object().keys({
+        firstname,
+        lastname,
+        email, 
+        password: Joi.string().min(8).pattern(new RegExp("^(?=.*?[0-9])(?=.*?[#?!@$%^&*-])")),
+        gender,
+        role
+    }); 
+    const result = rule.validate(req.body); 
+    const { value, error } = result; 
+    if (error) { 
+        return res.status(422).json({ 
+            success: false,
+            message: "Mật khẩu phải có tổi thiểu 8 kí tự, bao gồm chữ số và một số kí tự đặc biệt."  
+        }) 
+      }
+    try{
+        const user_email = await User.findOne({email})
+
+        if(user_email){
+            return res.status('400').json({success: false, message: 'Email exist'})
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        let temp = firstname.slice(0,1);
+        const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
+
+        const newUser = new User({email, firstname, lastname, password: hashedPassword, avatar, gender})
+        const newUserRole = await Role.findOne({role_name: role})
+        if(!newUserRole){
+            return res.status(500).json({success: false, message: "Role is null"})
+        }
+        
+        newUser.role = newUserRole._id
+        newUser.save((err) => {
+            if (err) return res.status(500).json({success:false, message: err.message });
+            });
+
+        const accessToken = jwt.sign({userID: newUser._id}, process.env.ACCESS_TOKEN_SECRET)
+        res.json({
+            success: true,
+            message: 'User created successfully',
+            accessToken
+        })
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json({success: false, message: 'Internal server error'})
     }
 }
