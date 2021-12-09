@@ -1,15 +1,15 @@
 'use strict';
 import mongoose from 'mongoose';
+import User from './User.js'
 
-
-const savePostSchema = new mongoose.Schema (
+const savePostSchema = new mongoose.Schema(
     {
         id_user: {
-            type: String
+          type: String
         },
         list_post: [
-                 String
-        ],
+            String
+        ]
     }
 )
 const savePost = mongoose.model('savePost', savePostSchema);
