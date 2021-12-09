@@ -18,7 +18,10 @@ import User from '../models/User.js'
 //@access private
 export const getUserInfo = async(req, res) => {
     try{
-        let profile = await User.findById(req.userID)
+        let profile = await User.findById(req.userID).populate({
+            path: 'role',
+            select: 'role_name'
+        })
         return res.status(200).json({success: true, data: profile})
 
     } catch (err){
@@ -234,3 +237,4 @@ export const changeAvatar = async (req, res) => {
         return res.status(400).json({success: false, message: err.message})
     }
 }
+

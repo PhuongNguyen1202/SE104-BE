@@ -120,6 +120,7 @@ export const loginFacebook = async (req, res) => {
         await axios.get(urlGraphFacebook)
             .then((res) => res.data)
             .then((data) => {
+                console.log(data);
                 email = data.email;
                 name = data.name;
             })
@@ -143,7 +144,7 @@ export const loginFacebook = async (req, res) => {
                     const temp = name.slice(0, 1);
                     const avatar = 'http://localhost:5000/avatar/default/' + `${temp}.jpg`
 
-                    const gender = 'Nam';
+                    const gender = 'Nữ';
                     const user = new User({ email, firstname: name, gender, avatar })
                     const role = await Role.findOne({ role_name: "user" })
                     if (!role) {
@@ -196,7 +197,7 @@ export const loginGoogle = async (req, res) => {
                     } else {
                         let temp = name.slice(0, 1);
                         const avatar = 'http://localhost:5000/avatar/default/' + `${temp}.jpg`
-                        const gender = 'Nam';
+                        const gender = 'Nữ';
                         const user = new User({ email, firstname: name, avatar, gender })
                         const role = await Role.findOne({ role_name: "user" })
                         if (!role) {

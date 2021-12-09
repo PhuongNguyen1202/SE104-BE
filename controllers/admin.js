@@ -6,19 +6,66 @@ import savePost from '../models/savePost.js';
 import likePost from '../models/reactions.js'
 import Roles from '../models/Role.js';
 import Joi from "joi"
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const DEFAULT_FOLDER_UPLOAD_IMAGE = './public/post/image';
 import fs from 'fs';
+const CURRENT_PAGE_DEFAULT = 1
+const LIMIT_OF_DEFAULT = 10
 //@route api/addmin/get-users
 //@desc get list users except resetlink
 //@access private
 export const getAllUsers = async(req, res) => {
+    //check limit and page
+    const current_page = parseInt(req.query.page) || CURRENT_PAGE_DEFAULT;
+    const per_page = parseInt(req.query.limit) || LIMIT_OF_DEFAULT;
+
+    if ((req.query.page && !Number.isFinite(parseInt(req.query.page))) || (req.query.limit && !Number.isFinite(parseInt(req.query.limit))))
+        return res.status(200).json({ status: 0, message: "limit and page must be a Number" })
+
+    if ((req.query.page && parseInt(req.query.page) < 0) || (req.query.limit && parseInt(req.query.limit) < 0))
+        return res.status(200).json({ status: 0, message: "limit and page must greater than 0" })
+
+    let natural;
+    const query = req.query.q;
+    if (query == 'new')
+        natural = -1;
+    else natural = 1;
     try{
-        const users = await User.find({}, {resetLink: 0})
+        let all_users = await User.find({}, {resetLink: 0})
+        let users = await User.find({}, {resetLink: 0})
+            .sort({ $natural: natural })
+            .populate({
+                path: 'role',
+                select: 'role_name'
+            })
+            .limit(per_page)
+            .skip(per_page * (current_page - 1))
+        users.forEach(user => console.log(user.role.role_name))
         if(!users){
             return res.status(404).json({succes: false, message: "Can not get all data"})
         }
-        return res.status(200).json({succes: true, data: users})
+        const total = all_users.length;
+        let from = 0;
+        let to = 0;
+        if ((current_page - 1) * per_page + 1 <= total) {
+            from = (current_page - 1) * per_page + 1;
+            to = from + users.length - 1;
+        }
+        else {
+            from = to = 0
+        }
+        let paging = {
+            "current_page": current_page,
+            "limit": per_page,
+            "from": from,
+            "to": to,
+            "total": total
+        }
+        if (natural === -1) paging.filter = "new"
+        else paging.query = "default"
+        return res.status(200).json({succes: true, data: users, paging: paging})
     }
     catch (err){
         return res.status(500).json({succes: false, message: err.message})
@@ -212,7 +259,7 @@ export const deleteAllUsers = async(req, res) => {
     }
 }
 
-//@route api/admin/addUser
+//@route api/admin/add-user
 //@desc post loginform
 //@access private
 export const addUser = async(req, res) => {
@@ -237,7 +284,8 @@ export const addUser = async(req, res) => {
         }) 
       }
     try{
-        const user_email = await User.findOne({email})
+        let user_email = await User.findOne({email})
+        console.log(user_email)
 
         if(user_email){
             return res.status('400').json({success: false, message: 'Email exist'})
@@ -249,7 +297,7 @@ export const addUser = async(req, res) => {
         const avatar = 'http://localhost:5000/avatar/default/' +`${temp}.jpg` 
 
         const newUser = new User({email, firstname, lastname, password: hashedPassword, avatar, gender})
-        const newUserRole = await Role.findOne({role_name: role})
+        const newUserRole = await Roles.findOne({role_name: role})
         if(!newUserRole){
             return res.status(500).json({success: false, message: "Role is null"})
         }
@@ -271,3 +319,21 @@ export const addUser = async(req, res) => {
         res.status(500).json({success: false, message: 'Internal server error'})
     }
 }
+
+//@route api/admin/user/:id
+//@desc get other user profile
+//@access private
+export const getUserById = async(req, res) => {
+    try{
+        let user_id = req.params.id
+        let profile = await User.findById(user_id).populate({
+            path: 'role',
+            select: 'role_name'
+        })
+        return res.status(200).json({success: true, data: profile})
+
+    } catch (err){
+        res.status(500).json({success: false, message: error.message})
+    }
+}
+

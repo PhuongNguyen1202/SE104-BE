@@ -17,4 +17,5 @@ router.put('/reset-password/:token', resetPassword)
 
 router.put('/change-avatar', [verifyToken, isUser], changeAvatar)
 
+
 export default router;
