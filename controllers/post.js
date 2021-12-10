@@ -477,7 +477,7 @@ export const updatePost = async (req, res) => {
         //check id_post
         if (!id_post.match(/^[0-9a-fA-F]{24}$/))
             return res.status(200).json({ status: 0, message: "Post is not exist" });
-        const post = await Post.findById(id_post);
+        const post = await Post.findOne({_id: id_post, id_author: req.userID});
         if (!post)
             return res.status(400).json({ status: 0, message: "Post is not exist" });
 
@@ -525,7 +525,7 @@ export const updatePost = async (req, res) => {
         //update
         await Post.findByIdAndUpdate(id_post, updatePost, { useFindAndModify: true });
         await PostDetail.findOneAndUpdate({ id_post }, updateDetailPost, { useFindAndModify: true });
-        res.status(200).json({ status: 0, message: "Update Success" })
+        res.status(200).json({ status: 1, message: "Update Success" })
 
     } catch (error) {
         res.status(400).json({ message: error.message })
