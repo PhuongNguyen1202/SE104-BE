@@ -310,7 +310,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWExM
 }
 ###
 GET http://localhost:5000/api/admin/get-users?page=1&limit=2
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWIwMjI4MDdiZjFmMTAyMGFlN2VmNWIiLCJpYXQiOjE2Mzg5NzI2MzN9.n82dRW4MHOwH9f0ZT8dhjY36vONkTdRHHJWnAn1DhCs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWIwMjI4MDdiZjFmMTAyMGFlN2VmNWIiLCJpYXQiOjE2Mzg5NzQ0OTR9.FJzDLsK_ENblHdyXfSNwB5siQxARlvBqru6OqNADu0M
 ###
 DELETE http://localhost:5000/api/admin/delete-user/61a5f57cf952a5f54dcac7d4
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2MWE2NTdjYjBiOGQyZjUwY2ZiYWU1NTQiLCJpYXQiOjE2MzgzNDc4NDV9.dgO4E9688-l4fQ1g8H_EVArlvCI8N0AbG5UrdW2y8g4
