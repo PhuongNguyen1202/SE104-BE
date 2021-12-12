@@ -229,7 +229,10 @@ export const changeAvatar = async (req, res) => {
         let new_avatar = await saveImage(DEFAULT_FOLDER_UPLOAD_IMAGE, avatar_name, avatar);
         console.log('update image')
 
-        const user = await User.findByIdAndUpdate(req.userID,{ avatar: new_avatar}, { new: true })
+        const user = await User.findByIdAndUpdate(req.userID,{ avatar: new_avatar}, { new: true }).populate({
+            path: 'role',
+            select: 'role_name'
+        })
         return res.status(200).json({success: true, data: user})
 
     }

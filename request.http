@@ -64,8 +64,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "password": "ngovy-2000",
-    "email": "o@gmail.com"
+    "password": "1234",
+    "email": "phuong@gmail.com"
 }
 ####
 POST http://localhost:5000/api/auth/login
