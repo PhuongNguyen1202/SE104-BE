@@ -65,7 +65,7 @@ export const updatePassword = async (req, res) => {
         const result = rule.validate(req.body); 
         const { value, error } = result; 
         if(!oldPassword || !newPassword || ! confirmPassword){
-            return res.status(400).json({success: false, message: "Missing field"})
+            return res.status(400).json({success: false, message: "Thông tin không hợp lệ."})
         }
         if (error) { 
             return res.status(422).json({ 
@@ -74,13 +74,13 @@ export const updatePassword = async (req, res) => {
             }) 
           }
         if(newPassword !== confirmPassword){
-            return res.status(422).json({success:false, message: "Newpassword and confirmPassword don't match" })
+            return res.status(422).json({success:false, message: "Vui lòng kiểm tra lại mật khẩu" })
         }
         const user = await User.findById(req.userID)
         if (user) {
             const passwordValid = await bcrypt.compareSync(oldPassword, user.password)
 
-            if (!passwordValid) return res.status(422).json({success: false, message: "Password is incorrect" });
+            if (!passwordValid) return res.status(422).json({success: false, message: "Sai mật khẩu" });
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
@@ -101,10 +101,10 @@ export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
         if(!email){
-            return res.status(400).json({success: false, message: "Missing field"})
+            return res.status(400).json({success: false, message: "Thông tin không hợp lệ!"})
         }
         const user = await User.findOne({ email })
-        if (!user) return res.status(422).json({ success: false, message: "Email not found!" });
+        if (!user) return res.status(422).json({ success: false, message: "Địa chỉ Email không tồn tại!" });
         //If email is correct
         const token = jwt.sign(
             { _id: user._id },
@@ -122,9 +122,9 @@ export const forgotPassword = async (req, res) => {
         const userupdate = await User.findByIdAndUpdate(user._id, { resetLink: token }, { new: true });
         await mg.messages().send(data, function (error, body) {
             if (error) {
-                res.status(422).json({success: false, message: error.message })
+                res.status(422).json({success: false, message: 'Vui lòng kiểm tra lại địa chỉ Email.' })
             }
-            else res.status(200).json({success: true, message: "Email have been sent"})
+            else res.status(200).json({success: true, message: "Email đã được gửi thành công."})
         });
     } catch (error) {
         res.status(404).json({success:false, message: error.message })
@@ -145,7 +145,7 @@ export const resetPassword = async (req, res) => {
         const result = rule.validate(req.body); 
         const { value, error } = result; 
         if(!newPass || !confirmPass){
-            return res.status(400).json({success: false, message: 'Missing field'})
+            return res.status(400).json({success: false, message: 'Thông tin không hợp lệ.'})
         }
         if (error) { 
             return res.status(422).json({ 
@@ -154,7 +154,7 @@ export const resetPassword = async (req, res) => {
             }) 
           }
         if(newPass !== confirmPass){
-            return res.status(422).json({success:false, message: "Newpassword and confirmPassword don't match" })
+            return res.status(422).json({success:false, message: "Mật khẩu mới và xác nhận mật khẩu không khớp." })
         }
 
         if(resetLink){
@@ -165,7 +165,7 @@ export const resetPassword = async (req, res) => {
 
                 User.findOne({resetLink}, async (err,user) =>{
                     if(err || !user){
-                        return res.status(400).json({success: false, message: 'User with this token does not exist.'})
+                        return res.status(400).json({success: false, message: 'Vui lòng kiểm tra lại địa chỉ Email.'})
                     }
 
 
@@ -181,13 +181,13 @@ export const resetPassword = async (req, res) => {
                         if (err) {
                             res.status(401).json({success: false, message: error.message })
                         }
-                        else res.status(200).json({success: true, message: 'Reset Password successfully'})
+                        else res.status(200).json({success: true, message: 'Mật khẩu đã được cập nhật thành công!'})
                     })
                 })
             })
         }
         else{
-           return res.status(401).json({success: false, message: 'Authentication error'})
+           return res.status(401).json({success: false, message: 'Lỗi xác thực'})
         }
     }
     catch(err){

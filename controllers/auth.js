@@ -26,7 +26,7 @@ export const registerUser = async (req, res) => {
     const result = rule.validate(req.body);
     const { value, error } = result;
     if (!firstname || !lastname || !email || !password) {
-        return res.status(400).json({ success: false, message: 'Missing field' })
+        return res.status(400).json({ success: false, message: 'Thông tin không hợp lệ' })
     }
     if (error) {
         return res.status(422).json({
@@ -38,7 +38,7 @@ export const registerUser = async (req, res) => {
         const user_email = await User.findOne({ email })
 
         if (user_email) {
-            return res.status('400').json({ success: false, message: 'Email exist' })
+            return res.status('400').json({ success: false, message: 'Địa chỉ email đã tồn tại' })
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -49,7 +49,7 @@ export const registerUser = async (req, res) => {
         const user = new User({ email, firstname, lastname, password: hashedPassword, gender, avatar })
         const role = await Role.findOne({ role_name: "user" })
         if (!role) {
-            return res.status(500).json({ success: false, message: "Role is null" })
+            return res.status(500).json({ success: false, message: "Thông tin không hợp lệ" })
         }
 
         user.role = role._id
@@ -60,13 +60,13 @@ export const registerUser = async (req, res) => {
         const accessToken = jwt.sign({ userID: user._id }, process.env.ACCESS_TOKEN_SECRET)
         res.json({
             success: true,
-            message: 'User created successfully',
+            message: 'Tài khoản đã được tạo thành công',
             accessToken
         })
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({ success: false, message: 'Internal server error' })
+        res.status(500).json({ success: false, message: 'Lỗi server' })
     }
 }
 
@@ -76,26 +76,26 @@ export const registerUser = async (req, res) => {
 export const login = async (req, res) => {
     const { email, password } = req.body
     if (!email || !password) {
-        return res.status(400).json({ success: false, message: 'Missing field' })
+        return res.status(400).json({ success: false, message: 'Thông tin không hợp lệ' })
     }
 
     try {
         const user = await User.findOne({ email })
 
         if (!user) {
-            return res.status(400).json({ success: false, message: 'Incorrect' })
+            return res.status(400).json({ success: false, message: 'Thông tin không hợp lệ' })
         }
 
         const passwordValid = await bcrypt.compareSync(password, user.password)
 
         if (!passwordValid) {
-            return res.status(400).json({ success: false, message: 'Incorrect' })
+            return res.status(400).json({ success: false, message: 'Thông tin không hợp lệ' })
         }
 
         const accessToken = jwt.sign({ userID: user._id.toString() }, process.env.ACCESS_TOKEN_SECRET)
         res.json({
             success: true,
-            message: 'Loggin successfully',
+            message: 'Đăng nhập thành công!',
             accessToken
         })
         console.log(user._id)
@@ -136,7 +136,7 @@ export const loginFacebook = async (req, res) => {
                     const accessToken = jwt.sign({ userID: user._id.toString() }, process.env.ACCESS_TOKEN_SECRET)
                     res.json({
                         success: true,
-                        message: 'Loggin successfully',
+                        message: 'Đăng nhập thành công!',
                         accessToken
                     })
                 } else {
@@ -159,7 +159,7 @@ export const loginFacebook = async (req, res) => {
                     const accessToken = jwt.sign({ userID: user._id }, process.env.ACCESS_TOKEN_SECRET)
                     res.json({
                         success: true,
-                        message: 'User created successfully',
+                        message: 'Tạo tài khoản thành công!',
                         accessToken
                     })
                 }
@@ -191,7 +191,7 @@ export const loginGoogle = async (req, res) => {
                         const accessToken = jwt.sign({ userID: user._id.toString() }, process.env.ACCESS_TOKEN_SECRET)
                         res.json({
                             success: true,
-                            message: 'Loggin successfully',
+                            message: 'Đăng nhập thành công!',
                             accessToken
                         })
                     } else {
@@ -212,7 +212,7 @@ export const loginGoogle = async (req, res) => {
                         const accessToken = jwt.sign({ userID: user._id }, process.env.ACCESS_TOKEN_SECRET)
                         res.json({
                             success: true,
-                            message: 'User created successfully',
+                            message: 'Tạo tài khoản thành công!',
                             accessToken
                         })
                     }
